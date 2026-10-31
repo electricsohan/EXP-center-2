@@ -1621,12 +1621,6 @@
                   <div class="w-4 h-4 rounded-full border-4 border-orange-500"></div>
                   <span class="text-sm font-black text-slate-900 tracking-tight">DemoPay <span class="text-orange-500">+</span></span>
                 </div>
-                <div class="flex items-center gap-3 text-slate-400">
-                  <i data-lucide="rotate-cw" class="w-4 h-4"></i>
-                  <div class="w-6 h-6 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center">
-                    <i data-lucide="lightbulb" class="w-3.5 h-3.5 fill-amber-500"></i>
-                  </div>
-                </div>
               </div>
 
               <!-- Main Action Buttons -->
@@ -2227,36 +2221,55 @@
 
     // Key attributes carried in the API message for each learn sub-step (illustrative UPI-style fields)
     const API_ATTRS = {
-      'Payer enters payee VPA':            ['payerVpa', 'payeeVpa', 'txnId', 'deviceId'],
-      'Payer enters payee mobile number':  ['payerVpa', 'payeeMobile', 'txnId', 'deviceId'],
+      // Payer entry (Pay to VPA / Pay to Mobile)
+      'Payer enters payee VPA':            ['payeeVpa', 'txnId'],
+      'Payer enters payee mobile number':  ['payeeMobile', 'txnId'],
       'Payee name returned':               ['payeeName', 'payeeVpa', 'payeeIfsc', 'respCode'],
       'Payer enters amount':               ['amount', 'currency=INR', 'txnNote', 'txnId'],
-      'Payer scans the merchant QR':       ['qrPayload', 'merchantVpa', 'mcc', 'qrType'],
-      'Merchant name and amount returned': ['merchantName', 'merchantVpa', 'amount', 'respCode'],
       'Payer selects bank account':        ['payerAccountRef', 'payerIfsc', 'accountType', 'payerBankCode'],
-      'UPI PIN captured securely':         ['encPinBlock', 'keyId', 'keyCode', 'seqNo'],
-      'Payment sent to Payer PSP':         ['txnId', 'txnType=PAY', 'payerVpa', 'payeeVpa', 'amount', 'encCredBlock', 'signature'],
-      'PSP forwards to UPI Switch':        ['msgId', 'orgId', 'payerPspId', 'payerBankCode', 'payeeBankCode', 'ts'],
-      'Payee address resolved':            ['payeeHandle', 'payeeVpa', 'beneficiaryAccount', 'bankCode (BIC)', 'respCode'],
-      'Debit request routed':              ['txnId', 'payerAccountRef', 'amount', 'payerBankCode', 'signature'],
-      'PIN verified by HSM':               ['encPinBlock', 'hsmKeyId', 'authSignature', 'respCode'],
-      'Payer account debited':             ['debitAmount', 'journalRef', 'balanceAfter', 'postingTs', 'respCode'],
-      'Debit confirmed to Switch':         ['txnId', 'respCode', 'journalRef', 'ts'],
-      'Credit request routed':             ['txnId', 'payeeAccountRef', 'amount', 'payeeBankCode', 'signature'],
-      'Payee account credited':            ['creditAmount', 'journalRef', 'respCode'],
-      'Credit confirmed to Switch':        ['txnId', 'respCode', 'ackRef', 'ts'],
-      'Switch confirms to Payer PSP':      ['txnId', 'txnStatus', 'respCode', 'rrn', 'approvalNum'],
-      'Receipt shown in the app':          ['txnStatus', 'rrn', 'amount', 'payeeName', 'txnTimestamp'],
-      'Payee PSP notified':                ['txnId', 'payeeVpa', 'amount', 'txnStatus', 'notifyTs'],
-      'Debit declined by core banking':    ['respCode=Z9', 'availableBalance', 'txnId', 'ts'],
-      'PIN verification failed':           ['encPinBlock', 'hsmKeyId', 'respCode=ZM'],
-      'Decline sent to Switch':            ['txnId', 'txnStatus=FAILURE', 'respCode', 'ts'],
-      'Failure response to Payer PSP':     ['txnId', 'txnStatus=FAILURE', 'respCode', 'rrn'],
-      'Failure shown in the app':          ['txnStatus=FAILURE', 'respCode', 'amount', 'txnTimestamp'],
-      'Credit posting requested':          ['txnId', 'payeeAccountRef', 'amount', 'signature'],
-      'Credit response not received':      ['txnId', 'txnStatus=PENDING', 'ts'],
-      'Deemed status to Payer PSP':        ['txnId', 'txnStatus=DEEMED', 'respCode', 'rrn'],
-      'Pending screen in the app':         ['txnStatus=DEEMED', 'rrn', 'amount', 'txnTimestamp']
+      // Arrows #1-#2
+      'UPI PIN captured securely':         ['cred'],
+      // Arrow #3
+      'Payment sent to Payer PSP':         ['payerVpa', 'payeeVpa', 'amount', 'cred'],
+      // Arrow #4
+      'PSP forwards to UPI Switch':        ['payerVpa', 'payerBankCode', 'payerAccount', 'payeeVpa', 'amount', 'cred'],
+      // Arrows #5-#6
+      'Payee address resolved':            ['payeeVpa', 'amount', 'payerVpa', 'beneficiaryAccount', 'payeeBankCode', 'respCode'],
+      // Arrow #7
+      'Debit request routed':              ['txnId', 'payerAccount', 'amount', 'cred'],
+      // Arrows #8-#9
+      'PIN verified by HSM':               ['cred', 'respCode'],
+      // Arrows #10-#11
+      'Payer account debited':             ['amount', 'respCode', 'approvalNum'],
+      // Arrow #12
+      'Debit confirmed to Switch':         ['respCode', 'approvalNum'],
+      // Arrow #13
+      'Credit request routed':             ['payeeAccount', 'amount', 'payeeBankCode'],
+      // Arrows #14-#15
+      'Payee account credited':            ['amount', 'respCode', 'approvalNum'],
+      // Arrow #16
+      'Credit confirmed to Switch':        ['respCode', 'approvalNum'],
+      // Arrow #17
+      'Switch confirms to Payer PSP':      ['txnStatus', 'respCode'],
+      // Arrow #18
+      'Receipt shown in the app':          ['txnStatus'],
+      // Arrow #19
+      'Payee PSP notified':                ['txnStatus', 'respCode'],
+
+      // Failure paths: same attributes as the success step they replace
+      'Debit declined by core banking':    ['amount', 'respCode', 'approvalNum'],
+      'PIN verification failed':           ['cred', 'respCode'],
+      'Decline sent to Switch':            ['respCode', 'approvalNum'],
+      'Failure response to Payer PSP':     ['txnStatus', 'respCode'],
+      'Failure shown in the app':          ['txnStatus'],
+      'Credit posting requested':          ['amount', 'respCode', 'approvalNum'],
+      'Credit response not received':      ['respCode', 'approvalNum'],
+      'Deemed status to Payer PSP':        ['txnStatus', 'respCode'],
+      'Pending screen in the app':         ['txnStatus'],
+
+      // Scan QR (not in the new list, kept as before)
+      'Payer scans the merchant QR':       ['qrPayload', 'merchantVpa', 'mcc', 'qrType'],
+      'Merchant name and amount returned': ['merchantName', 'merchantVpa', 'amount', 'respCode']
     };
     function apiAttrsHtml(list) {
       return `<div class="mt-2 pt-2 border-t border-orange-200">
@@ -2777,10 +2790,6 @@
             <div class="flex items-center gap-1.5">
               <div class="w-4 h-4 rounded-full border-4 border-orange-500"></div>
               <span class="text-sm font-black text-slate-900 tracking-tight">DemoPay <span class="text-orange-500">+</span></span>
-            </div>
-            <div class="flex items-center gap-3 text-slate-400">
-              <i data-lucide="rotate-cw" class="w-4 h-4"></i>
-              <div class="w-6 h-6 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center"><i data-lucide="lightbulb" class="w-3.5 h-3.5 fill-amber-500"></i></div>
             </div>
           </div>
           <div class="flex-1 px-4 mt-2">
@@ -3312,5 +3321,22 @@
     }
   </script>
   <button id="home-btn" onclick="goHome()" style="display:none" class="fixed bottom-4 left-4 z-[80] px-4 py-2 rounded-xl bg-slate-900 border border-slate-600 text-white text-xs font-bold shadow-lg">&#8962; Home</button>
+
+<script>
+  // Deter casual inspection: block right-click and common DevTools / view-source shortcuts.
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    var ctrl = e.ctrlKey || e.metaKey;
+    if (
+      k === 'f12' ||
+      (ctrl && k === 'u') ||
+      (ctrl && e.shiftKey && (k === 'i' || k === 'j' || k === 'c'))
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
+</script>
 </body>
 </html>
