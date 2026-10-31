@@ -170,11 +170,8 @@
     /* 2. Glowing Neon Grid & Radial Nebula */
     .backend-box .ui-grid-bg {
       background-color: #02040a;
-      background-image: 
-        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 70%),
-        linear-gradient(to right, rgba(56, 189, 248, 0.1) 1px, transparent 1px), 
-        linear-gradient(to bottom, rgba(56, 189, 248, 0.1) 1px, transparent 1px);
-      background-size: 100% 100%, 40px 40px, 40px 40px;
+      background-image: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+      background-size: 100% 100%;
       box-shadow: inset 0 0 80px rgba(0,0,0,0.8);
     }
 
@@ -219,19 +216,24 @@
     }
 
     /* ===== Learn panel: active step covers 80% (middle) and blurs the other 20% ===== */
-    .learn-stack { transition: filter .35s ease, opacity .35s ease; }
-    .learn-stack.is-blurred { filter: blur(3.5px); opacity: .55; pointer-events: none; user-select: none; }
-    .learn-active { transition: top .35s ease, height .35s ease; }
-    .api-attr-chip { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+    /* tiles expand in place to fit their content; the active tile animates open */
+    .learn-expand { display: grid; grid-template-rows: 1fr; }
+    .learn-expand.is-opening { animation: learn-open .4s ease-out both; }
+    .learn-expand > .learn-expand-inner { min-height: 0; overflow: hidden; }
+    @keyframes learn-open { from { grid-template-rows: 0fr; opacity: 0; } to { grid-template-rows: 1fr; opacity: 1; } }
+    .learn-tile { transition: filter .35s ease, opacity .35s ease, background-color .25s ease, border-color .25s ease; }
+    .learn-tile.learn-blur { filter: blur(3.5px); opacity: .5; pointer-events: none; user-select: none; }
+    .learn-tile.learn-active { position: relative; z-index: 10; transform: scale(1.015); box-shadow: 0 14px 30px -8px rgba(249,115,22,.35), 0 6px 12px -6px rgba(15,23,42,.25); }
+    .learn-tile.learn-rise { animation: learn-rise .45s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes learn-rise { from { transform: translateY(16px) scale(.96); opacity: .4; } to { transform: translateY(0) scale(1.015); opacity: 1; } }
+    .api-attr-chip { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 2px 6px; border-radius: 6px; background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
 
     /* ===== Backend flow: colour scheme taken only from the reference image ===== */
     .backend-box { background: #050818 !important; }
     .backend-box .ui-grid-bg {
       background-color: #040716 !important;
-      background-image:
-        radial-gradient(circle at 50% 45%, rgba(56,189,248,0.10) 0%, transparent 65%),
-        linear-gradient(to right, rgba(34,211,238,0.10) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(34,211,238,0.10) 1px, transparent 1px) !important;
+      background-image: radial-gradient(circle at 50% 45%, rgba(56,189,248,0.10) 0%, transparent 65%) !important;
+      background-size: 100% 100% !important;
     }
     .backend-box #flow-svg g[id^="block-"] rect { filter: drop-shadow(0 0 8px currentColor) !important; }
     .backend-box #flow-svg g[id^="block-"] text { fill: #f1f5f9 !important; text-shadow: 0 0 6px rgba(255,255,255,.35) !important; }
@@ -283,8 +285,8 @@
       </div>
     </div>
 
-    <!-- Flow selector (dropdown, defaults to Pay Flow) -->
-    <div class="flex items-center gap-2 sm:gap-3">
+    <!-- Flow selector (dropdown, defaults to Pay Flow) - shown only on the "See how this happens" screen -->
+    <div id="header-controls" class="flex items-center gap-2 sm:gap-3" style="display:none">
       <!-- Light / Dark mode toggle (dark is the default; the phone screen never changes) -->
       <button id="theme-toggle" onclick="toggleTheme()" type="button" title="Switch to light mode" aria-label="Switch to light mode" class="ui-theme-btn flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition">
         <i data-lucide="sun" class="w-4 h-4"></i><span class="hidden sm:inline">Light mode</span>
@@ -299,6 +301,28 @@
           <option value="balance" class="bg-[#0a0f1d]">Check Balance Flow</option>
         </select>
         <i data-lucide="chevron-down" class="w-4 h-4 text-orange-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+      </div>
+      <!-- Scenario (pay flows only): Success / Fail / Deemed, and a failure type that is active only for Fail -->
+      <div id="scenario-controls" class="flex items-center gap-2 sm:gap-3">
+        <label for="scenario-select" class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 hidden xl:block">Scenario</label>
+        <div class="relative">
+          <select id="scenario-select" title="Scenario" onchange="setScenario(this.value)" class="ui-select appearance-none bg-slate-900/90 border border-slate-700 hover:border-orange-500/60 focus:border-orange-500 focus:outline-none text-white text-base sm:text-xs font-bold rounded-xl pl-3.5 pr-9 py-2 cursor-pointer transition">
+          <option value="success" selected class="bg-[#0a0f1d]">Success</option>
+          <option value="fail" class="bg-[#0a0f1d]">Fail</option>
+          <option value="deemed" class="bg-[#0a0f1d]">Deemed</option>
+        </select>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-orange-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        </div>
+        <div id="failtype-wrap" class="flex items-center gap-2 sm:gap-3" style="display:none">
+        <label for="failtype-select" class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 hidden xl:block">Failure type</label>
+        <div class="relative">
+          <select id="failtype-select" disabled title="Active only when Scenario is Fail" onchange="setFailType(this.value)" class="disabled:opacity-40 disabled:cursor-not-allowed ui-select appearance-none bg-slate-900/90 border border-slate-700 hover:border-orange-500/60 focus:border-orange-500 focus:outline-none text-white text-base sm:text-xs font-bold rounded-xl pl-3.5 pr-9 py-2 cursor-pointer transition">
+          <option value="funds" selected class="bg-[#0a0f1d]">Insufficient funds</option>
+          <option value="pin" class="bg-[#0a0f1d]">Incorrect UPI PIN</option>
+        </select>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-orange-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        </div>
+        </div>
       </div>
     </div>
   </header>
@@ -385,7 +409,7 @@
             </button>
             <button onclick="toggleAutoSimulation()" id="btn-auto-sim" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-emerald-600 hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-orange-500/20 transition">
               <i id="btn-auto-icon" data-lucide="play" class="w-3.5 h-3.5 fill-white"></i>
-              <span id="btn-auto-text">Simulate (0.5s)</span>
+              <span id="btn-auto-text">Simulate</span>
             </button>
           </div>
         </div>
@@ -464,7 +488,7 @@
     <!-- ======================================================================= -->
     <section id="sec-learn" class="flex flex-col min-h-0">
       <div class="learn-box flex-1 flex flex-col min-h-[420px] rounded-2xl overflow-hidden border border-gray-300 bg-gray-50 shadow-xl">
-        <div class="bg-gray-300 text-gray-800 px-4 py-2 text-sm font-bold border-b border-gray-400/50 shrink-0">Learn what happens</div>
+        <div class="bg-gray-300 text-gray-800 px-4 py-2 text-sm font-bold border-b border-gray-400/50 shrink-0">Activity Center</div>
         <div class="relative flex-1 min-h-0">
           <div id="learn-body" class="absolute inset-0 overflow-y-auto p-3">
             <div id="learn-list" class="relative h-full"></div>
@@ -594,10 +618,16 @@
     window.animFrameId = 0;
 
     let currentFlowType = 'pay';
+    let currentScenario = 'success';   // pay flows only: success | fail | deemed
+    let currentFailType = 'funds';     // used when currentScenario === 'fail': funds | pin | vpa
     let currentStepIndex = 0;
     let autoSimTimer = null;
     let endTimers = [];        // end-of-flow sequence: clear highlights -> phone returns -> processing -> success
     let currentView = 'journey';
+
+    // Pay flows pause on each backend hop so the Activity Center can be read (other flows stay quick)
+    const BACKEND_DWELL_MS = 4000;
+    const backendDwell = () => PAY_FLOWS.includes(currentFlowType) ? BACKEND_DWELL_MS : 500;
 
     function cancelEndTimers() { endTimers.forEach(clearTimeout); endTimers = []; }
 
@@ -605,7 +635,7 @@
     // processing / backend-only moments live in the Learn + Backend Flow view.
     function viewForStep(step) {
       const st = step.phoneState || '';
-      return (st === 'pending-clearing' || st.startsWith('success')) ? 'backend' : 'journey';
+      return (st === 'pending-clearing' || isFinalState(st)) ? 'backend' : 'journey';
     }
 
     function setLayoutView(view) {
@@ -832,9 +862,54 @@
       { letter: 'C', bank: 'Bank C', sub: 'Current •••• 7733' }
     ];
 
+
+    // ---- Scenarios for the pay flows (Pay VPA, Pay Mobile, QR): Success / Fail / Deemed ----------
+    const PAY_FLOWS = ['pay', 'mobile', 'qr'];
+    const FAIL_INFO = {
+      funds: { label: 'Insufficient funds', code: 'Z9', reason: 'Insufficient funds in Bank A (•••• 4821)' },
+      pin:   { label: 'Incorrect UPI PIN',  code: 'ZM', reason: 'Incorrect UPI PIN entered' }
+    };
+    const isFinalState = st => !!st && (st.startsWith('success') || st === 'fail-txn' || st === 'deemed-txn');
+    function getScenario() {
+      if (!PAY_FLOWS.includes(currentFlowType)) return { kind: 'success' };
+      return { kind: currentScenario, fail: currentFailType };
+    }
+    function getFailInfo() { return FAIL_INFO[currentFailType] || FAIL_INFO.funds; }
+
+    // Re-cuts the shared backend steps (arrows #1-#19) for the chosen scenario
+    function applyScenario(core, sc) {
+      if (!sc || sc.kind === 'success') return core;
+      const mk = (n, over) => Object.assign({}, core[n - 1], over);
+      const failEnd = (note) => [
+        mk(17, { title: 'Central Switch -> Payer PSP [Failure Response]', desc: `<b>Arrow #17 [Resp]:</b> ${note}` }),
+        mk(18, { title: 'Payer PSP -> Payer APP [Render Failure]', desc: '<b>Arrow #18 [Resp]:</b> Payer PSP forwards the failure status to Payer APP, which shows the payment-failed screen. The payer is not charged.', phoneState: 'fail-txn' })
+      ];
+      if (sc.kind === 'deemed') {
+        return core.slice(0, 14).concat([
+          { title: "Payee's Bank -> Central Switch [Credit Response Not Received]",
+            desc: '<b>Arrow #16 [Resp]:</b> The credit response from Payee\'s Bank does not reach Central Switch before the timer expires, so the credit status is unknown.',
+            activeBlocks: ['block-central-switch', 'block-payee-bank'], activeWires: [], phoneState: 'pending-clearing' },
+          mk(17, { title: 'Central Switch -> Payer PSP [Deemed Response]', desc: '<b>Arrow #17 [Resp]:</b> Central Switch marks the transaction <b>DEEMED</b> (debit done, credit not confirmed) and sends this status to Payer PSP.' }),
+          mk(18, { title: 'Payer PSP -> Payer APP [Render Pending]', desc: '<b>Arrow #18 [Resp]:</b> Payer PSP forwards the deemed status to Payer APP, which shows a pending-payment screen.', phoneState: 'deemed-txn' })
+        ]);
+      }
+      if (sc.fail === 'pin') {
+        return core.slice(0, 8).concat([
+          mk(9, { title: "Payer Bank's HSM -> Payer's Bank [PIN Verification Failed]", desc: '<b>Arrow #9 [Resp]:</b> HSM reports that the PIN does not match the stored key. Response code <code>ZM</code> (incorrect PIN); no authorization signature is returned.' }),
+          mk(12, { title: "Payer's Bank -> Central Switch [Debit Declined]", desc: '<b>Arrow #12 [Resp]:</b> Payer\'s Bank returns the decline (<code>ZM</code>) to Central Switch. The account is not debited.' })
+        ], failEnd('Central Switch relays the failed response (<code>ZM</code>) to Payer PSP.'));
+      }
+      // default failure: insufficient funds
+      return core.slice(0, 10).concat([
+        mk(11, { title: "Payer Bank's CBS -> Payer's Bank [Debit Declined]", desc: '<b>Arrow #11 [Resp]:</b> CBS rejects the debit because the available balance is below ₹750.00. Response code <code>Z9</code> (insufficient funds).' }),
+        mk(12, { title: "Payer's Bank -> Central Switch [Debit Declined]", desc: '<b>Arrow #12 [Resp]:</b> Payer\'s Bank returns the decline (<code>Z9</code>) to Central Switch. No credit is attempted.' })
+      ], failEnd('Central Switch relays the failed response (<code>Z9</code>) to Payer PSP.'));
+    }
+    const SCENARIO_STEP_CACHE = {};
+
     // Builds the full step list for a pay flow: payer UI steps (enter -> verify -> amount -> account -> proceed)
     // followed by the shared backend steps.
-    function buildPayFlowSteps(kind) {
+    function buildPayFlowSteps(kind, sc) {
       const P = PAYEE[kind];
       const isMobile = kind === 'mobile';
       const payeeResult = isMobile
@@ -843,8 +918,8 @@
 
       const ui = [
         {
-          title: 'User on myUPI Home Screen',
-          desc: `Payer opens the myUPI application and taps on <b>${P.homeLabel}</b> to initiate a transfer.`,
+          title: 'User on DemoPay Home Screen',
+          desc: `Payer opens the DemoPay application and taps on <b>${P.homeLabel}</b> to initiate a transfer.`,
           activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'home-screen'
         },
         {
@@ -878,8 +953,8 @@
 
       const qrUi = [
         {
-          title: 'User on myUPI Home Screen',
-          desc: 'Payer opens the myUPI application and taps the <b>Scan QR</b> button.',
+          title: 'User on DemoPay Home Screen',
+          desc: 'Payer opens the DemoPay application and taps the <b>Scan QR</b> button.',
           activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'home-screen'
         },
         {
@@ -917,7 +992,7 @@
         return c;
       });
 
-      return (kind === 'qr' ? qrUi : ui).concat(core).map((st, i) => Object.assign({}, st, { stepNum: i + 1 }));
+      return (kind === 'qr' ? qrUi : ui).concat(applyScenario(core, sc)).map((st, i) => Object.assign({}, st, { stepNum: i + 1 }));
     }
 
     const PAY_FLOW_STEPS = buildPayFlowSteps('pay');
@@ -928,8 +1003,8 @@
     const PIN_SET_FLOW_STEPS = [
       {
         stepNum: 1,
-        title: "User on myUPI Home Screen",
-        desc: "Payer opens the myUPI application and taps on <b>Reset PIN</b> to configure their UPI PIN.",
+        title: "User on DemoPay Home Screen",
+        desc: "Payer opens the DemoPay application and taps on <b>Reset PIN</b> to configure their UPI PIN.",
         activeBlocks: ['block-payer-app'],
         activeWires: [],
         phoneState: 'home-screen'
@@ -1108,8 +1183,8 @@
     const BALANCE_FLOW_STEPS = [
       {
         stepNum: 1,
-        title: "User on myUPI Home Screen",
-        desc: "Payer opens the myUPI application and taps on <b>Check Balance</b>.",
+        title: "User on DemoPay Home Screen",
+        desc: "Payer opens the DemoPay application and taps on <b>Check Balance</b>.",
         activeBlocks: ['block-payer-app'],
         activeWires: [],
         phoneState: 'home-screen'
@@ -1117,7 +1192,7 @@
       {
         stepNum: 2,
         title: "Payer Selects Account for Balance Check",
-        desc: "Payer on myUPI App selects <b>Bank A (•••• 4821)</b> to query available ledger balance.",
+        desc: "Payer on DemoPay App selects <b>Bank A (•••• 4821)</b> to query available ledger balance.",
         activeBlocks: ['block-payer-app'],
         activeWires: [],
         phoneState: 'bal-select-acct'
@@ -1516,7 +1591,7 @@
       const container = document.getElementById('phone-display-container');
 
       // Same success screen re-requested (e.g. Pay flow steps 20 -> 21): keep it, don't restart confetti/animation
-      if (state === 'success-txn' && window.currentPhoneState === 'success-txn' && !opts.force) return;
+      if ((state === 'success-txn' || state === 'fail-txn' || state === 'deemed-txn') && window.currentPhoneState === state && !opts.force) return;
       window.currentPhoneState = state;
       const pushBanner = document.getElementById('sms-push-banner');
 
@@ -1544,7 +1619,7 @@
               <div class="px-4 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-1.5">
                   <div class="w-4 h-4 rounded-full border-4 border-orange-500"></div>
-                  <span class="text-sm font-black text-slate-900 tracking-tight">myUPI <span class="text-orange-500">+</span></span>
+                  <span class="text-sm font-black text-slate-900 tracking-tight">DemoPay <span class="text-orange-500">+</span></span>
                 </div>
                 <div class="flex items-center gap-3 text-slate-400">
                   <i data-lucide="rotate-cw" class="w-4 h-4"></i>
@@ -1833,6 +1908,52 @@
           scheduleReturnHome(currentFrame);
           break;
 
+        case 'fail-txn': {
+          const fi = getFailInfo();
+          container.innerHTML = `
+            <div class="h-full flex flex-col justify-between py-6 px-4 bg-white">
+              <div class="flex flex-col items-center justify-center text-center mt-10">
+                <div class="w-20 h-20 rounded-full bg-red-50 border-4 border-red-400 text-red-500 flex items-center justify-center mb-6 shadow-lg shadow-red-500/10">
+                  <i data-lucide="x" class="w-10 h-10 stroke-[4]"></i>
+                </div>
+                <h2 class="text-3xl font-black font-mono text-slate-900 tracking-tight">₹750.00</h2>
+                <span class="text-sm font-bold text-red-600 mt-2">Payment Failed</span>
+                <p class="text-xs text-slate-500 mt-1">${fi.reason}</p>
+              </div>
+              <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-5 text-left text-[11px] font-mono space-y-4 shadow-sm mb-6">
+                <div class="flex justify-between items-center text-slate-500"><span>Status:</span><span class="text-red-600 font-bold">FAILED</span></div>
+                ${fi.code ? `<div class="flex justify-between items-center text-slate-500"><span>Response code:</span><span class="text-slate-900 font-bold">${fi.code}</span></div>` : ''}
+                <div class="flex justify-between items-center text-slate-500"><span>Amount debited:</span><span class="text-slate-900 font-bold">₹0.00</span></div>
+              </div>
+              <button id="sim-back-home" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 ghost-press">Done</button>
+            </div>
+          `;
+          scheduleReturnHome(currentFrame);
+          break;
+        }
+
+        case 'deemed-txn':
+          container.innerHTML = `
+            <div class="h-full flex flex-col justify-between py-6 px-4 bg-white">
+              <div class="flex flex-col items-center justify-center text-center mt-10">
+                <div class="w-20 h-20 rounded-full bg-amber-50 border-4 border-amber-400 text-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/10">
+                  <i data-lucide="clock" class="w-10 h-10 stroke-[3]"></i>
+                </div>
+                <h2 class="text-3xl font-black font-mono text-slate-900 tracking-tight">₹750.00</h2>
+                <span class="text-sm font-bold text-amber-600 mt-2">Payment Pending (Deemed)</span>
+                <p class="text-xs text-slate-500 mt-1 max-w-[240px]">Your payment to ${getPayee().name} is being confirmed. Please check the status later.</p>
+              </div>
+              <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-5 text-left text-[11px] font-mono space-y-4 shadow-sm mb-6">
+                <div class="flex justify-between items-center text-slate-500"><span>Status:</span><span class="text-amber-600 font-bold">DEEMED</span></div>
+                <div class="flex justify-between items-center text-slate-500"><span>Switch RRN:</span><span class="text-slate-900 font-bold">423189201948</span></div>
+                <div class="flex justify-between items-center text-slate-500"><span>Debited A/C:</span><span class="text-slate-900 font-bold">Bank A (•••• 4821)</span></div>
+              </div>
+              <button id="sim-back-home" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 ghost-press">Done</button>
+            </div>
+          `;
+          scheduleReturnHome(currentFrame);
+          break;
+
         case 'success-pin':
           triggerConfettiBurst();
           container.innerHTML = `
@@ -2009,9 +2130,9 @@
     // =========================================================================
     // 4. BACKEND TAB CONTROLLER
     // =========================================================================
-    // ---- Learn what happens: six major steps, per flow ------------------------------------
+    // ---- Activity Center: major steps, per flow ------------------------------------
     // Sub-steps match either backend arrows (a: [from, to]) or phone screens (states: [...]).
-    function learnGroups(flow) {
+    function learnGroupsSuccess(flow) {
       const P = PAYEE[flow] || PAYEE.pay;
       const isQr = flow === 'qr';
       const isMobile = flow === 'mobile';
@@ -2056,6 +2177,50 @@
       ];
     }
 
+    function learnGroups(flow) {
+      const base = learnGroupsSuccess(flow);
+      const sc = getScenario();
+      if (sc.kind === 'success' || !PAY_FLOWS.includes(flow)) return base;
+      const [init, addr, debit, credit] = base;
+      const sub = (g, title) => g.subs.find(x => x.title === title);
+      const failConfirm = (text) => ({ title: 'Payer gets failure notice', subs: [
+        { a: [17], title: 'Failure response to Payer PSP', text },
+        { a: [18], title: 'Failure shown in the app', text: 'The Payer PSP forwards the failed status to the app, which shows the payment-failed screen. The payer is not charged.' }
+      ]});
+      if (sc.kind === 'deemed') {
+        return [init, addr, debit,
+          { title: 'Credit', subs: [
+            sub(credit, 'Credit request routed'),
+            { a: [14], title: 'Credit posting requested', text: 'The payee\'s bank asks its core banking system to post the credit to the payee account.' },
+            { a: [15, 16], title: 'Credit response not received', text: 'No confirmation of the credit reaches the switch before the timer expires, so the credit status is unknown.' }
+          ]},
+          { title: 'Payer sees deemed status', subs: [
+            { a: [17], title: 'Deemed status to Payer PSP', text: 'The switch marks the transaction DEEMED, because the debit is done but the credit is not confirmed, and tells the payer\'s PSP.' },
+            { a: [18], title: 'Pending screen in the app', text: 'The app shows the payment as pending (deemed). The final outcome is not shown yet.' }
+          ]}
+        ];
+      }
+      if (sc.fail === 'pin') {
+        return [init, addr,
+          { title: 'Debit and Authorization', subs: [
+            sub(debit, 'Debit request routed'),
+            { a: [8, 9], title: 'PIN verification failed', text: 'The bank sends the encrypted PIN block to its Hardware Security Module, which finds that it does not match. It returns code ZM (incorrect PIN) and no authorization signature.' },
+            { a: [12], title: 'Decline sent to Switch', text: 'The payer\'s bank sends the ZM decline back to the switch. The account is not debited.' }
+          ]},
+          failConfirm('The switch relays the ZM decline to the payer\'s PSP.')
+        ];
+      }
+      return [init, addr,
+        { title: 'Debit and Authorization', subs: [
+          sub(debit, 'Debit request routed'),
+          sub(debit, 'PIN verified by HSM'),
+          { a: [10, 11], title: 'Debit declined by core banking', text: 'The bank instructs its core banking system to debit ₹750.00. The CBS finds the available balance too low and rejects it with code Z9 (insufficient funds).' },
+          { a: [12], title: 'Decline sent to Switch', text: 'The payer\'s bank sends the Z9 decline back to the switch. No credit is attempted.' }
+        ]},
+        failConfirm('The switch relays the Z9 decline to the payer\'s PSP.')
+      ];
+    }
+
     const subTag = (sb) => sb.tag ? sb.tag : (sb.a[0] === sb.a[sb.a.length - 1] ? `#${sb.a[0]}` : `#${sb.a[0]}–${sb.a[sb.a.length - 1]}`);
     const CHECK_SVG = '<svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
 
@@ -2082,7 +2247,16 @@
       'Credit confirmed to Switch':        ['txnId', 'respCode', 'ackRef', 'ts'],
       'Switch confirms to Payer PSP':      ['txnId', 'txnStatus', 'respCode', 'rrn', 'approvalNum'],
       'Receipt shown in the app':          ['txnStatus', 'rrn', 'amount', 'payeeName', 'txnTimestamp'],
-      'Payee PSP notified':                ['txnId', 'payeeVpa', 'amount', 'txnStatus', 'notifyTs']
+      'Payee PSP notified':                ['txnId', 'payeeVpa', 'amount', 'txnStatus', 'notifyTs'],
+      'Debit declined by core banking':    ['respCode=Z9', 'availableBalance', 'txnId', 'ts'],
+      'PIN verification failed':           ['encPinBlock', 'hsmKeyId', 'respCode=ZM'],
+      'Decline sent to Switch':            ['txnId', 'txnStatus=FAILURE', 'respCode', 'ts'],
+      'Failure response to Payer PSP':     ['txnId', 'txnStatus=FAILURE', 'respCode', 'rrn'],
+      'Failure shown in the app':          ['txnStatus=FAILURE', 'respCode', 'amount', 'txnTimestamp'],
+      'Credit posting requested':          ['txnId', 'payeeAccountRef', 'amount', 'signature'],
+      'Credit response not received':      ['txnId', 'txnStatus=PENDING', 'ts'],
+      'Deemed status to Payer PSP':        ['txnId', 'txnStatus=DEEMED', 'respCode', 'rrn'],
+      'Pending screen in the app':         ['txnStatus=DEEMED', 'rrn', 'amount', 'txnTimestamp']
     };
     function apiAttrsHtml(list) {
       return `<div class="mt-2 pt-2 border-t border-orange-200">
@@ -2104,61 +2278,68 @@
       return { groups, cg, cs };
     }
 
-    // opts.pause: step just finished -> show every step, nothing covered
+    // opts.pause: step just finished -> every tile collapsed, previous ones ticked
     // opts.doneUpTo: groups below this index are shown as done
+    // opts.animate: the active tile plays its "open" animation (only when the group changes)
     function learnListHtml(arrow, state, flow, allDone, opts = {}) {
       const { groups, cg, cs } = locateGroup(arrow, state, flow);
       const showActive = !allDone && !opts.pause && cg !== -1;
       const doneCut = allDone ? groups.length : (opts.pause ? opts.doneUpTo : cg);
 
-      const badgeFor = (gi, active) => {
+      const header = (g, gi, active) => {
         const done = doneCut !== -1 && gi < doneCut;
         const cls = active ? 'bg-orange-500 text-white' : done ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500';
-        return { done, cls };
-      };
-      const header = (g, gi, active) => {
-        const { done, cls } = badgeFor(gi, active);
         return `<div class="flex items-center gap-3 px-3 py-2.5">
-              <span class="w-6 h-6 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0 ${cls}">${done ? CHECK_SVG : gi + 1}</span>
-              <div class="min-w-0"><div class="text-[13px] font-bold ${active ? 'text-gray-900' : 'text-gray-600'}">${g.title}</div></div>
+              <span class="w-7 h-7 rounded-full text-[13px] font-bold flex items-center justify-center shrink-0 ${cls}">${done ? CHECK_SVG : gi + 1}</span>
+              <div class="min-w-0"><div class="text-[15px] font-bold ${active ? 'text-gray-900' : 'text-gray-600'}">${g.title}</div></div>
             </div>`;
       };
 
-      // compact tiles for every step (visible state, or the blurred background)
-      const stackItems = groups.map((g, gi) => {
-        const cls = 'rounded-xl border bg-white border-gray-200' + (showActive ? ' flex-1 flex items-center' : '');
-        return `<li class="${cls}">${header(g, gi, false)}</li>`;
-      }).join('');
-
-      let activeCard = '';
-      if (showActive) {
-        const g = groups[cg];
+      const items = groups.map((g, gi) => {
+        if (!(showActive && gi === cg)) {
+          // collapsed tile: spare height is shared out so the column stays evenly filled
+          return `<li class="learn-tile rounded-xl border bg-white border-gray-200 flex-1 flex items-center ${showActive ? 'learn-blur' : ''}">${header(g, gi, false)}</li>`;
+        }
+        // expanded tile: height follows its content, so short steps are never empty
         const subs = g.subs.map((sb, si) => {
           const subActive = si === cs;
           const subDone = si < cs;
           const cls = subActive ? 'border-orange-500 bg-white shadow-sm' : subDone ? 'border-emerald-400 bg-white/70' : 'border-gray-200 bg-white/40';
           const tcls = subActive ? 'text-gray-900' : subDone ? 'text-gray-600' : 'text-gray-400';
-          return `<li class="rounded-lg border-l-4 px-2.5 py-2 transition-all ${cls}">
+          return `<li class="rounded-lg border-l-4 px-3 py-2 transition-all ${cls}">
               <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold ${tcls}">${sb.title}</span>
-                <span class="text-[9px] font-mono ${subActive ? 'text-orange-600' : 'text-gray-400'}">${subTag(sb)}</span>
+                <span class="text-sm font-bold ${tcls}">${sb.title}</span>
+                <span class="text-[11px] font-mono shrink-0 ${subActive ? 'text-orange-600' : 'text-gray-400'}">${subTag(sb)}</span>
               </div>
-              ${subActive ? `<p class="learn-fade text-[11px] text-gray-600 mt-1 leading-snug">${sb.text}</p>${API_ATTRS[sb.title] ? apiAttrsHtml(API_ATTRS[sb.title]) : ''}` : ''}
+              ${subActive ? `<p class="learn-fade text-[13px] text-gray-600 mt-1 leading-snug">${sb.text}</p>${API_ATTRS[sb.title] ? apiAttrsHtml(API_ATTRS[sb.title]) : ''}` : ''}
             </li>`;
         }).join('');
-        activeCard = `<div class="learn-active absolute left-0 right-0 z-10 rounded-xl border border-orange-400 bg-orange-50 shadow-lg flex flex-col overflow-hidden" style="top:10%;height:80%">
-            <div class="shrink-0">${header(g, cg, true)}</div>
-            <ul class="px-3 pb-3 space-y-1.5 flex-1 min-h-0 overflow-y-auto">${subs}</ul>
-          </div>`;
-      }
+        return `<li class="learn-tile learn-active ${opts.animate ? 'learn-rise' : ''} rounded-xl border border-orange-400 bg-orange-50 flex-none" data-active="1">
+            ${header(g, gi, true)}
+            <div class="learn-expand ${opts.animate ? 'is-opening' : ''}"><div class="learn-expand-inner">
+              <ul class="px-3 pb-3 space-y-1.5">${subs}</ul>
+            </div></div>
+          </li>`;
+      }).join('');
 
-      return `<div class="learn-stack ${showActive ? 'is-blurred h-full' : ''}"><ol class="space-y-2 ${showActive ? 'h-full flex flex-col' : ''}">${stackItems}</ol></div>${activeCard}`;
+      return `<ol class="space-y-2 min-h-full flex flex-col">${items}</ol>`;
     }
 
     let learnTimer = null;
     let learnLastGroup = -1;
+    let learnPausing = false;        // collapsed "beat" between two steps is on screen
+    let learnCtx = { a: null, state: null };   // latest arrow / phone screen, read when the beat ends
+
     function renderLearn(list, a, state, allDone, opts) {
       list.innerHTML = learnListHtml(a, state, currentFlowType, allDone, opts);
+      // keep the open tile in view when the list is taller than the panel
+      const body = document.getElementById('learn-body');
+      const act = list.querySelector('[data-active]');
+      if (body && act) {
+        const top = act.offsetTop - 8, bottom = act.offsetTop + act.offsetHeight + 8;
+        if (top < body.scrollTop) body.scrollTop = Math.max(0, top);
+        else if (bottom > body.scrollTop + body.clientHeight) body.scrollTop = Math.min(top, bottom - body.clientHeight);
+      } else if (body && !act) { body.scrollTop = 0; }
     }
 
     function updateLearnPanel(arrow, state, allDone) {
@@ -2168,25 +2349,36 @@
       const supported = ['pay', 'mobile', 'qr'].includes(currentFlowType);
       wip.classList.toggle('hidden', supported);
       list.classList.toggle('hidden', !supported);
-      clearTimeout(learnTimer);
-      if (!supported) return;
+      if (!supported) { clearTimeout(learnTimer); learnPausing = false; return; }
       const a = (arrow === null || arrow === undefined) ? null : parseInt(arrow, 10);
+      const { cg } = locateGroup(a, state || null, currentFlowType);
+
+      // still inside the collapsed beat and the step belongs to the same group:
+      // just remember it, the pending timer opens the tile with the latest step
+      if (!allDone && learnPausing && cg !== -1 && cg === learnLastGroup) { learnCtx = { a, state: state || null }; return; }
+
+      clearTimeout(learnTimer);
+      learnPausing = false;
+      learnCtx = { a, state: state || null };
 
       if (allDone) { learnLastGroup = -1; renderLearn(list, null, null, true); return; }
-
-      const { cg } = locateGroup(a, state || null, currentFlowType);
       if (cg === -1) { learnLastGroup = -1; renderLearn(list, a, state || null, false, {}); return; }
 
       if (learnLastGroup !== -1 && cg !== learnLastGroup) {
-        // previous step is over: show all steps again, then cover with the next one
+        // previous step is over: collapse everything for a beat, then open the next tile.
+        // learnLastGroup moves on immediately and the timer reads the latest step, so fast
+        // auto-simulation (0.5s per hop) can no longer keep restarting the beat.
+        learnLastGroup = cg;
+        learnPausing = true;
         renderLearn(list, a, state || null, false, { pause: true, doneUpTo: cg });
         learnTimer = setTimeout(() => {
-          learnLastGroup = cg;
-          renderLearn(list, a, state || null, false, {});
-        }, 700);
+          learnPausing = false;
+          renderLearn(list, learnCtx.a, learnCtx.state, false, { animate: true });
+        }, 450);
       } else {
+        const firstOpen = learnLastGroup === -1;
         learnLastGroup = cg;
-        renderLearn(list, a, state || null, false, {});
+        renderLearn(list, a, state || null, false, { animate: firstOpen });
       }
     }
 
@@ -2217,11 +2409,22 @@
       if (svg) svg.setAttribute('viewBox', FLOW_VIEWBOX[tab] || FLOW_VIEWBOX.pay);
       injectSvgWires(tab);
 
+      const isPay = PAY_FLOWS.includes(tab);
+      const scCtl = document.getElementById('scenario-controls');
+      if (scCtl) scCtl.style.display = isPay ? 'flex' : 'none';
+      const scSel = document.getElementById('scenario-select');
+      const ftSel = document.getElementById('failtype-select');
+      if (scSel) scSel.value = currentScenario;
+      if (ftSel) { ftSel.value = currentFailType; ftSel.disabled = currentScenario !== 'fail'; }
+      const ftWrap = document.getElementById('failtype-wrap');
+      if (ftWrap) ftWrap.style.display = (isPay && currentScenario === 'fail') ? 'flex' : 'none';
+
       const total = getActiveSteps().length;
       const names = { pay: 'Pay to VPA Flow', mobile: 'Pay to Mobile Number Flow', qr: 'QR Payment Flow', pin: 'Pin Set Flow', balance: 'Balance Enquiry' };
       const titleEl = document.getElementById('fs-step-title');
       const badgeEl = document.getElementById('fs-step-badge');
-      if (titleEl) titleEl.innerText = `${total}-Step ${names[tab]} Ready`;
+      const scLabel = !isPay || currentScenario === 'success' ? '' : currentScenario === 'deemed' ? ' (Deemed)' : ` (Fail: ${getFailInfo().label})`;
+      if (titleEl) titleEl.innerText = `${total}-Step ${names[tab]}${scLabel} Ready`;
       if (badgeEl) badgeEl.innerText = `STEP: 0 / ${total}`;
       renderPhoneScreen('home-screen');
     }
@@ -2235,7 +2438,7 @@
 
       const autoText = document.getElementById('btn-auto-text');
       const autoIcon = document.getElementById('btn-auto-icon');
-      if (autoText) autoText.innerText = "Simulate (0.5s)";
+      if (autoText) autoText.innerText = "Simulate";
       if (autoIcon) autoIcon.setAttribute('data-lucide', 'play');
 
       clearDiagramHighlights();
@@ -2249,12 +2452,14 @@
       lucide.createIcons();
     }
 
+    function setScenario(v) { currentScenario = v; setBackendTab(currentFlowType); }
+    function setFailType(v) { currentFailType = v; setBackendTab(currentFlowType); }
+
     function getActiveSteps() {
       if (currentFlowType === 'pin') return PIN_SET_FLOW_STEPS;
       if (currentFlowType === 'balance') return BALANCE_FLOW_STEPS;
-      if (currentFlowType === 'mobile') return MOBILE_FLOW_STEPS;
-      if (currentFlowType === 'qr') return QR_FLOW_STEPS;
-      return PAY_FLOW_STEPS;
+      const key = `${currentFlowType}|${currentScenario}|${currentFailType}`;
+      return SCENARIO_STEP_CACHE[key] || (SCENARIO_STEP_CACHE[key] = buildPayFlowSteps(PAY_FLOWS.includes(currentFlowType) ? currentFlowType : 'pay', getScenario()));
     }
 
     function stepSimulation(direction) {
@@ -2281,7 +2486,7 @@
       const view = pureLast ? 'journey' : viewForStep(step);
       let phoneState = step.phoneState;
       // the success screen is held back until the phone returns after the backend flow completes
-      if (phoneState && phoneState.startsWith('success') && (pureLast || view === 'backend')) phoneState = 'pending-clearing';
+      if (phoneState && isFinalState(phoneState) && (pureLast || view === 'backend')) phoneState = 'pending-clearing';
       setLayoutView(view);
 
       const badge = document.getElementById('fs-step-badge');
@@ -2296,13 +2501,14 @@
         if (pureLast) {
           endTimers.push(setTimeout(() => renderPhoneScreen(finalState), 1200));
         } else {
-          // 0.5s: last arrow / Learn highlight go inactive; 1.0s: phone returns showing processing, then success
-          endTimers.push(setTimeout(() => { clearDiagramHighlights(); updateLearnPanel(null, null, true); }, 500));
+          // after the dwell: last arrow / Activity Center highlight go inactive; 0.5s later the phone returns showing processing, then the result
+          const dwell = backendDwell();
+          endTimers.push(setTimeout(() => { clearDiagramHighlights(); updateLearnPanel(null, null, true); }, dwell));
           endTimers.push(setTimeout(() => {
             setLayoutView('journey');
             renderPhoneScreen('pending-clearing', { force: true });
             endTimers.push(setTimeout(() => renderPhoneScreen(finalState), 1200));
-          }, 1000));
+          }, dwell + 500));
         }
       }
 
@@ -2364,7 +2570,7 @@
         isAutoSimulating = true;
         const autoText = document.getElementById('btn-auto-text');
         const autoIcon = document.getElementById('btn-auto-icon');
-        if (autoText) autoText.innerText = "Pause (0.5s)";
+        if (autoText) autoText.innerText = "Pause";
         if (autoIcon) autoIcon.setAttribute('data-lucide', 'pause');
         runAutoLoop();
       }
@@ -2405,8 +2611,8 @@
           delay = 1500; // Proceed to Pay tap
         } else if (state === 'home-screen' || state.includes('select-acct')) {
           delay = 1000; // Give enough time for the initial UI button press animation
-        } else if (state.startsWith('success')) {
-          delay = (currentStepIndex < activeSteps.length - 1) ? 500 : 2500;   // phone is hidden until the flow completes
+        } else if (state === 'pending-clearing' || isFinalState(state)) {
+          delay = (currentStepIndex < activeSteps.length - 1) ? backendDwell() : 2500;   // backend hop: time to read the Activity Center
         }
       }
 
@@ -2482,6 +2688,8 @@
       document.getElementById('home-tiles').style.display = which === 'tiles' ? 'flex' : 'none';
       document.getElementById('mode-journey').style.display = which === 'journey' ? 'flex' : 'none';
       document.getElementById('mode-experience').style.display = which === 'experience' ? 'flex' : 'none';
+      const hc = document.getElementById('header-controls');
+      if (hc) hc.style.display = which === 'experience' ? 'flex' : 'none';
       document.getElementById('home-btn').style.display = (which === 'tiles' || isMobileView()) ? 'none' : 'block';
       if (which !== 'journey') ijReset();
     }
@@ -2568,7 +2776,7 @@
           <div class="px-4 py-4 flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <div class="w-4 h-4 rounded-full border-4 border-orange-500"></div>
-              <span class="text-sm font-black text-slate-900 tracking-tight">myUPI <span class="text-orange-500">+</span></span>
+              <span class="text-sm font-black text-slate-900 tracking-tight">DemoPay <span class="text-orange-500">+</span></span>
             </div>
             <div class="flex items-center gap-3 text-slate-400">
               <i data-lucide="rotate-cw" class="w-4 h-4"></i>
@@ -2796,7 +3004,7 @@
     // Debit: success updates the balance; amount above the balance fails with Z9
     function ijFinishPay() {
       const amt = parseInt(ij.amount, 10), P = ij.payee, a = DEBIT_ACCOUNTS[ij.acct];
-      const t = { id: 'MYUPI' + ijDigits(15), rrn: '4' + ijDigits(11), ts: new Date(), amount: amt, payee: P.name, vpa: P.vpa || null,
+      const t = { id: 'DEMOPAY' + ijDigits(15), rrn: '4' + ijDigits(11), ts: new Date(), amount: amt, payee: P.name, vpa: P.vpa || null,
                   bank: a.bank, last4: a.sub.slice(-4), note: (ij.note || '').trim(), status: 'success' };
       if (!ij.pinOk) {            // wrong PIN: the flow carries on and ends on a failure screen
         t.status = 'failed'; t.code = 'ZM'; t.reason = 'Incorrect PIN';
