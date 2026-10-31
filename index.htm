@@ -151,6 +151,116 @@
       .backend-portrait-blocker { display: flex !important; }
       .backend-landscape-workspace { display: none !important; }
     }
+/* ===================== FUTURISTIC BACKEND FLOW ===================== */
+    
+    /* 1. Deep space/cyberpunk container background */
+    .backend-box {
+      background: #050714 !important;
+      border-color: #1e293b !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+    }
+    .backend-box .bg-gray-300 {
+      background: rgba(15, 23, 42, 0.8) !important;
+      color: #38bdf8 !important;
+      border-bottom: 1px solid #1e3a8a !important;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* 2. Glowing Neon Grid & Radial Nebula */
+    .backend-box .ui-grid-bg {
+      background-color: #02040a;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 70%),
+        linear-gradient(to right, rgba(56, 189, 248, 0.1) 1px, transparent 1px), 
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.8);
+    }
+
+    /* 3. SVG Participant Boxes: Dark fill with glowing colored borders */
+    #flow-svg rect {
+      fill: #0b1120 !important; /* Dark interior to match the scheme */
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.15));
+    }
+    
+    /* 4. Glowing Text */
+    #flow-svg text {
+      fill: #e2e8f0 !important;
+      text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    }
+    #flow-svg .seq-title {
+      fill: #38bdf8 !important;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* 5. Faint neon lifelines */
+    #seq-lifelines line {
+      stroke: rgba(56, 189, 248, 0.4) !important;
+      stroke-dasharray: 4 6 !important;
+    }
+
+    /* 6. Arrow Wires & Labels */
+    #svg-wires-group path {
+      filter: drop-shadow(0 0 4px currentColor);
+    }
+    #svg-wires-group text {
+      fill: #cbd5e1 !important;
+      stroke: #02040a !important; /* Dark outline for readability */
+      stroke-width: 3px !important;
+    }
+    #svg-wires-group text.seq-label-active {
+      fill: #f97316 !important;
+      stroke: #000000 !important;
+      text-shadow: 0 0 8px #f97316;
+    }
+
+    /* ===== Learn panel: active step covers 80% (middle) and blurs the other 20% ===== */
+    .learn-stack { transition: filter .35s ease, opacity .35s ease; }
+    .learn-stack.is-blurred { filter: blur(3.5px); opacity: .55; pointer-events: none; user-select: none; }
+    .learn-active { transition: top .35s ease, height .35s ease; }
+    .api-attr-chip { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; padding: 2px 6px; border-radius: 6px; background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+
+    /* ===== Backend flow: colour scheme taken only from the reference image ===== */
+    .backend-box { background: #050818 !important; }
+    .backend-box .ui-grid-bg {
+      background-color: #040716 !important;
+      background-image:
+        radial-gradient(circle at 50% 45%, rgba(56,189,248,0.10) 0%, transparent 65%),
+        linear-gradient(to right, rgba(34,211,238,0.10) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34,211,238,0.10) 1px, transparent 1px) !important;
+    }
+    .backend-box #flow-svg g[id^="block-"] rect { filter: drop-shadow(0 0 8px currentColor) !important; }
+    .backend-box #flow-svg g[id^="block-"] text { fill: #f1f5f9 !important; text-shadow: 0 0 6px rgba(255,255,255,.35) !important; }
+    .backend-box #block-payer-app rect        { fill: #1a0d02 !important; stroke: #ff9f1c !important; color: #ff9f1c; }
+    .backend-box #block-payer-app text        { fill: #ffe2b8 !important; }
+    .backend-box #block-cl rect               { fill: #0a1a4f !important; stroke: #3b6cff !important; color: #3b6cff; }
+    .backend-box #block-cl text               { fill: #bfdbfe !important; }
+    .backend-box #block-payer-psp rect        { fill: #2a1205 !important; stroke: #ff8a1f !important; color: #ff8a1f; }
+    .backend-box #block-payer-psp text        { fill: #ffd1a3 !important; }
+    .backend-box #block-central-switch rect   { fill: #2a0c08 !important; stroke: #ff5a1f !important; color: #ff5a1f; }
+    .backend-box #block-central-switch text   { fill: #ffe4d6 !important; }
+    .backend-box #block-payer-bank rect       { fill: #03241a !important; stroke: #3dff9a !important; color: #3dff9a; }
+    .backend-box #block-payer-bank text       { fill: #bbf7d0 !important; }
+    .backend-box #block-payer-hsm rect        { fill: #03201f !important; stroke: #2dd4bf !important; color: #2dd4bf; }
+    .backend-box #block-payer-hsm text        { fill: #99f6e4 !important; }
+    .backend-box #block-payer-cbs rect        { fill: #03241a !important; stroke: #22c55e !important; color: #22c55e; }
+    .backend-box #block-payer-cbs text        { fill: #bbf7d0 !important; }
+    .backend-box #block-payee-psp rect        { fill: #04202e !important; stroke: #22d3ee !important; color: #22d3ee; }
+    .backend-box #block-payee-psp text        { fill: #a5f3fc !important; }
+    .backend-box #block-payee-bank rect       { fill: #230a33 !important; stroke: #c86bff !important; color: #c86bff; }
+    .backend-box #block-payee-bank text       { fill: #f0abfc !important; }
+    .backend-box #block-payee-cbs rect        { fill: #2a0a2e !important; stroke: #e879f9 !important; color: #e879f9; }
+    .backend-box #block-payee-cbs text        { fill: #f5d0fe !important; }
+    .backend-box #svg-wires-group path:not(.wire-active) { stroke: #22d3ee !important; }
+    .backend-box #arrow-neutral path { fill: #22d3ee !important; }
+    .backend-box #svg-wires-group text { fill: #a5f3fc !important; stroke: #050818 !important; }
+    .backend-box #svg-wires-group tspan[fill] { fill: #f472b6 !important; }
+
+
   </style>
 </head>
 <body class="ui-page bg-[#05070e] text-slate-100 min-h-screen flex flex-col font-sans antialiased select-none overflow-x-hidden">
@@ -196,7 +306,61 @@
   <!-- ========================================================================= -->
   <!-- MAIN WORKSPACE: SIDE-BY-SIDE INTEGRATED CONTAINER                         -->
   <!-- ========================================================================= -->
-  <main class="flex-1 flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 min-h-0 overflow-y-auto xl:overflow-hidden">
+  <!-- START: two tiles -->
+  <div id="home-tiles" class="flex-1 flex items-center justify-center p-6">
+    <div class="grid gap-5 w-full max-w-2xl grid-cols-1 sm:grid-cols-2 auto-rows-fr">
+      <button onclick="openJourney()" class="home-tile ui-card h-full min-h-[200px] flex flex-col text-left rounded-3xl border border-slate-700 bg-slate-900 p-6 hover:border-orange-500 transition shadow-xl">
+        <span class="w-12 h-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center mb-4"><i data-lucide="smartphone" class="w-6 h-6"></i></span>
+        <div class="text-lg font-black text-white leading-tight">1. The User Journey</div>
+        <p class="text-sm text-slate-400 mt-1 leading-relaxed">Use the interactive payer phone. Pay, scan, set PIN and check balance.</p>
+      </button>
+      <button onclick="openExperience()" class="home-tile ui-card h-full min-h-[200px] flex flex-col text-left rounded-3xl border border-slate-700 bg-slate-900 p-6 hover:border-cyan-400 transition shadow-xl">
+        <span class="w-12 h-12 rounded-2xl bg-cyan-500 text-white flex items-center justify-center mb-4"><i data-lucide="network" class="w-6 h-6"></i></span>
+        <div class="text-lg font-black text-white leading-tight">2. See How it happens</div>
+        <p class="text-sm text-slate-400 mt-1 leading-relaxed">Watch each step travel through the backend flow diagram.</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODE 1: INTERACTIVE USER JOURNEY (phone only, same frame and screens as the scripted phone) -->
+  <div id="mode-journey" class="flex-1 flex items-start justify-center p-4 sm:p-6" style="display:none">
+    <div id="ij-fit-outer" class="relative w-full max-w-[370px]" style="height:730px;">
+      <div id="ij-fit" style="position:absolute;left:50%;top:0;width:370px;height:730px;transform:translateX(-50%);transform-origin:top center;">
+        <div class="w-[370px] h-[730px] rounded-[48px] p-3 bg-black border-4 border-neutral-800 shadow-2xl relative flex flex-col overflow-hidden">
+          <div class="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-5 bg-black border border-neutral-800 rounded-full z-40 flex items-center justify-center pointer-events-none">
+            <div class="w-2.5 h-2.5 rounded-full bg-slate-800 mr-2 border border-slate-700"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+          </div>
+          <div class="w-full h-full bg-white rounded-[40px] overflow-hidden flex flex-col relative border border-slate-200 select-none text-slate-800">
+            <div id="ij-sms-banner" class="hidden absolute top-2 inset-x-3 z-[70] bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-slate-300 transition-transform duration-500 transform -translate-y-[150%]">
+              <div class="flex items-start gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5"><i data-lucide="message-square" class="w-4 h-4"></i></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-center text-[10px] text-slate-500 mb-0.5">
+                    <span class="font-bold text-slate-900 flex items-center gap-1">Bank A <span class="text-[9px] font-mono font-normal text-slate-500">(VK-BANKA)</span></span>
+                    <span class="text-[9px]">now</span>
+                  </div>
+                  <p class="text-[11px] text-slate-700 font-medium leading-tight"><span class="font-mono font-bold text-slate-900 bg-orange-100 px-1 rounded text-orange-800">849201</span> is your secret OTP to set UPI PIN for A/C ••••4821. Valid for 10 mins. Do not share.</p>
+                </div>
+              </div>
+            </div>
+            <div class="h-10 pt-2 px-6 flex justify-between items-center text-[11px] font-semibold text-slate-600 z-30 bg-white">
+              <span id="ij-phone-time">10:42</span>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="signal" class="w-3 h-3 text-slate-700"></i>
+                <span class="text-[10px] font-bold">5G</span>
+                <i data-lucide="battery-full" class="w-3.5 h-3.5 text-emerald-600"></i>
+              </div>
+            </div>
+            <div id="ij-container" class="flex-1 flex flex-col relative overflow-hidden bg-white"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODE 2: CURRENT EXPERIENCE -->
+  <main id="mode-experience" style="display:none" class="flex-1 flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 min-h-0 overflow-y-auto xl:overflow-hidden">
 
         <!-- COMMON CONTROL HEADER (spans phone + flow diagram) -->
         <div class="ui-strip flex flex-wrap items-center justify-between gap-2 bg-slate-900/90 backdrop-blur border border-slate-800 rounded-2xl px-3 py-2.5 z-30 shadow-md shrink-0 w-full">
@@ -303,7 +467,7 @@
         <div class="bg-gray-300 text-gray-800 px-4 py-2 text-sm font-bold border-b border-gray-400/50 shrink-0">Learn what happens</div>
         <div class="relative flex-1 min-h-0">
           <div id="learn-body" class="absolute inset-0 overflow-y-auto p-3">
-            <ol id="learn-list" class="space-y-2"></ol>
+            <div id="learn-list" class="relative h-full"></div>
             <div id="learn-wip" class="hidden rounded-xl border border-amber-300 bg-amber-50 p-4 text-center">
               <div class="inline-flex items-center gap-2 text-amber-800 font-bold text-sm">
                 <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
@@ -405,7 +569,10 @@
     const setTime = () => {
       const now = new Date();
       const el = document.getElementById('live-phone-time');
-      if (el) el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      const t = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      if (el) el.textContent = t;
+      const el2 = document.getElementById('ij-phone-time');
+      if (el2) el2.textContent = t;
     };
     setTime();
     setInterval(setTime, 1000);
@@ -1892,64 +2059,134 @@
     const subTag = (sb) => sb.tag ? sb.tag : (sb.a[0] === sb.a[sb.a.length - 1] ? `#${sb.a[0]}` : `#${sb.a[0]}–${sb.a[sb.a.length - 1]}`);
     const CHECK_SVG = '<svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
 
-    // Pure function: HTML for the list given the arrow / phone screen currently being shown
-    function learnListHtml(arrow, state, flow, allDone) {
+
+    // Key attributes carried in the API message for each learn sub-step (illustrative UPI-style fields)
+    const API_ATTRS = {
+      'Payer enters payee VPA':            ['payerVpa', 'payeeVpa', 'txnId', 'deviceId'],
+      'Payer enters payee mobile number':  ['payerVpa', 'payeeMobile', 'txnId', 'deviceId'],
+      'Payee name returned':               ['payeeName', 'payeeVpa', 'payeeIfsc', 'respCode'],
+      'Payer enters amount':               ['amount', 'currency=INR', 'txnNote', 'txnId'],
+      'Payer scans the merchant QR':       ['qrPayload', 'merchantVpa', 'mcc', 'qrType'],
+      'Merchant name and amount returned': ['merchantName', 'merchantVpa', 'amount', 'respCode'],
+      'Payer selects bank account':        ['payerAccountRef', 'payerIfsc', 'accountType', 'payerBankCode'],
+      'UPI PIN captured securely':         ['encPinBlock', 'keyId', 'keyCode', 'seqNo'],
+      'Payment sent to Payer PSP':         ['txnId', 'txnType=PAY', 'payerVpa', 'payeeVpa', 'amount', 'encCredBlock', 'signature'],
+      'PSP forwards to UPI Switch':        ['msgId', 'orgId', 'payerPspId', 'payerBankCode', 'payeeBankCode', 'ts'],
+      'Payee address resolved':            ['payeeHandle', 'payeeVpa', 'beneficiaryAccount', 'bankCode (BIC)', 'respCode'],
+      'Debit request routed':              ['txnId', 'payerAccountRef', 'amount', 'payerBankCode', 'signature'],
+      'PIN verified by HSM':               ['encPinBlock', 'hsmKeyId', 'authSignature', 'respCode'],
+      'Payer account debited':             ['debitAmount', 'journalRef', 'balanceAfter', 'postingTs', 'respCode'],
+      'Debit confirmed to Switch':         ['txnId', 'respCode', 'journalRef', 'ts'],
+      'Credit request routed':             ['txnId', 'payeeAccountRef', 'amount', 'payeeBankCode', 'signature'],
+      'Payee account credited':            ['creditAmount', 'journalRef', 'respCode'],
+      'Credit confirmed to Switch':        ['txnId', 'respCode', 'ackRef', 'ts'],
+      'Switch confirms to Payer PSP':      ['txnId', 'txnStatus', 'respCode', 'rrn', 'approvalNum'],
+      'Receipt shown in the app':          ['txnStatus', 'rrn', 'amount', 'payeeName', 'txnTimestamp'],
+      'Payee PSP notified':                ['txnId', 'payeeVpa', 'amount', 'txnStatus', 'notifyTs']
+    };
+    function apiAttrsHtml(list) {
+      return `<div class="mt-2 pt-2 border-t border-orange-200">
+        <div class="text-[9px] font-bold uppercase tracking-wider text-orange-600 mb-1.5">Key API message attributes</div>
+        <div class="flex flex-wrap gap-1">${list.map(a => `<span class="api-attr-chip">${a}</span>`).join('')}</div>
+      </div>`;
+    }
+
+    // Locate the active group / sub-step for an arrow number or phone screen
+    function locateGroup(arrow, state, flow) {
       const groups = learnGroups(flow || currentFlowType);
-      // locate the current sub-step: by arrow number when one is showing, otherwise by phone screen
-      let curG = -1, curS = -1;
+      let cg = -1, cs = -1;
       groups.forEach((g, gi) => g.subs.forEach((sb, si) => {
         const hit = arrow !== null
           ? (sb.a && arrow >= sb.a[0] && arrow <= sb.a[sb.a.length - 1])
           : (sb.states && state && sb.states.includes(state));
-        if (hit) { curG = gi; curS = si; }
+        if (hit) { cg = gi; cs = si; }
       }));
-      if (allDone) { curG = groups.length; curS = -1; }   // finished: every step shown as done, none highlighted
-      return groups.map((g, gi) => {
-        const active = gi === curG;
-        const done = curG !== -1 && gi < curG;
-        const badge = active ? 'bg-orange-500 text-white' : done ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500';
-        const subs = active ? `<ul class="px-3 pb-3 space-y-1.5">${g.subs.map((sb, si) => {
-          const subActive = si === curS;
-          const subDone = si < curS;
+      return { groups, cg, cs };
+    }
+
+    // opts.pause: step just finished -> show every step, nothing covered
+    // opts.doneUpTo: groups below this index are shown as done
+    function learnListHtml(arrow, state, flow, allDone, opts = {}) {
+      const { groups, cg, cs } = locateGroup(arrow, state, flow);
+      const showActive = !allDone && !opts.pause && cg !== -1;
+      const doneCut = allDone ? groups.length : (opts.pause ? opts.doneUpTo : cg);
+
+      const badgeFor = (gi, active) => {
+        const done = doneCut !== -1 && gi < doneCut;
+        const cls = active ? 'bg-orange-500 text-white' : done ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500';
+        return { done, cls };
+      };
+      const header = (g, gi, active) => {
+        const { done, cls } = badgeFor(gi, active);
+        return `<div class="flex items-center gap-3 px-3 py-2.5">
+              <span class="w-6 h-6 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0 ${cls}">${done ? CHECK_SVG : gi + 1}</span>
+              <div class="min-w-0"><div class="text-[13px] font-bold ${active ? 'text-gray-900' : 'text-gray-600'}">${g.title}</div></div>
+            </div>`;
+      };
+
+      // compact tiles for every step (visible state, or the blurred background)
+      const stackItems = groups.map((g, gi) => {
+        const cls = 'rounded-xl border bg-white border-gray-200' + (showActive ? ' flex-1 flex items-center' : '');
+        return `<li class="${cls}">${header(g, gi, false)}</li>`;
+      }).join('');
+
+      let activeCard = '';
+      if (showActive) {
+        const g = groups[cg];
+        const subs = g.subs.map((sb, si) => {
+          const subActive = si === cs;
+          const subDone = si < cs;
           const cls = subActive ? 'border-orange-500 bg-white shadow-sm' : subDone ? 'border-emerald-400 bg-white/70' : 'border-gray-200 bg-white/40';
           const tcls = subActive ? 'text-gray-900' : subDone ? 'text-gray-600' : 'text-gray-400';
-          return `<li ${subActive ? 'data-active="1"' : ''} class="rounded-lg border-l-4 px-2.5 py-2 transition-all ${cls}">
+          return `<li class="rounded-lg border-l-4 px-2.5 py-2 transition-all ${cls}">
               <div class="flex items-center justify-between gap-2">
                 <span class="text-xs font-bold ${tcls}">${sb.title}</span>
                 <span class="text-[9px] font-mono ${subActive ? 'text-orange-600' : 'text-gray-400'}">${subTag(sb)}</span>
               </div>
-              ${subActive ? `<p class="learn-fade text-[11px] text-gray-600 mt-1 leading-snug">${sb.text}</p>` : ''}
+              ${subActive ? `<p class="learn-fade text-[11px] text-gray-600 mt-1 leading-snug">${sb.text}</p>${API_ATTRS[sb.title] ? apiAttrsHtml(API_ATTRS[sb.title]) : ''}` : ''}
             </li>`;
-        }).join('')}</ul>` : '';
-        return `<li ${active ? 'data-active="1"' : ''} class="rounded-xl border transition-all ${active ? 'border-orange-400 bg-orange-50 shadow-sm' : 'border-gray-200 bg-white'}">
-            <div class="flex items-center gap-3 px-3 py-2.5">
-              <span class="w-6 h-6 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0 ${badge}">${done ? CHECK_SVG : gi + 1}</span>
-              <div class="min-w-0">
-                <div class="text-[13px] font-bold ${active ? 'text-gray-900' : 'text-gray-600'}">${g.title}</div>
-              </div>
-            </div>
-            ${subs}
-          </li>`;
-      }).join('');
+        }).join('');
+        activeCard = `<div class="learn-active absolute left-0 right-0 z-10 rounded-xl border border-orange-400 bg-orange-50 shadow-lg flex flex-col overflow-hidden" style="top:10%;height:80%">
+            <div class="shrink-0">${header(g, cg, true)}</div>
+            <ul class="px-3 pb-3 space-y-1.5 flex-1 min-h-0 overflow-y-auto">${subs}</ul>
+          </div>`;
+      }
+
+      return `<div class="learn-stack ${showActive ? 'is-blurred h-full' : ''}"><ol class="space-y-2 ${showActive ? 'h-full flex flex-col' : ''}">${stackItems}</ol></div>${activeCard}`;
+    }
+
+    let learnTimer = null;
+    let learnLastGroup = -1;
+    function renderLearn(list, a, state, allDone, opts) {
+      list.innerHTML = learnListHtml(a, state, currentFlowType, allDone, opts);
     }
 
     function updateLearnPanel(arrow, state, allDone) {
       const list = document.getElementById('learn-list');
       const wip = document.getElementById('learn-wip');
-      const body = document.getElementById('learn-body');
       if (!list || !wip) return;
       const supported = ['pay', 'mobile', 'qr'].includes(currentFlowType);
       wip.classList.toggle('hidden', supported);
       list.classList.toggle('hidden', !supported);
+      clearTimeout(learnTimer);
       if (!supported) return;
       const a = (arrow === null || arrow === undefined) ? null : parseInt(arrow, 10);
-      list.innerHTML = learnListHtml(a, state || null, currentFlowType, !!allDone);
-      // keep the active item visible inside the panel
-      const el = list.querySelector('li[data-active="1"] li[data-active="1"]') || list.querySelector('li[data-active="1"]');
-      if (el && body) {
-        const r = el.getBoundingClientRect(), br = body.getBoundingClientRect();
-        if (r.bottom > br.bottom) body.scrollTop += r.bottom - br.bottom + 8;
-        else if (r.top < br.top) body.scrollTop -= br.top - r.top + 8;
+
+      if (allDone) { learnLastGroup = -1; renderLearn(list, null, null, true); return; }
+
+      const { cg } = locateGroup(a, state || null, currentFlowType);
+      if (cg === -1) { learnLastGroup = -1; renderLearn(list, a, state || null, false, {}); return; }
+
+      if (learnLastGroup !== -1 && cg !== learnLastGroup) {
+        // previous step is over: show all steps again, then cover with the next one
+        renderLearn(list, a, state || null, false, { pause: true, doneUpTo: cg });
+        learnTimer = setTimeout(() => {
+          learnLastGroup = cg;
+          renderLearn(list, a, state || null, false, {});
+        }, 700);
+      } else {
+        learnLastGroup = cg;
+        renderLearn(list, a, state || null, false, {});
       }
     }
 
@@ -2211,18 +2448,661 @@
       if (modal) modal.style.display = 'none';
     }
 
+
+    // =====================================================================
+    // START SCREEN + INTERACTIVE USER JOURNEY
+    // Same screens as the scripted phone in "See How it happens", but driven by real input.
+    // =====================================================================
+    function isMobileView() { return window.matchMedia('(max-width: 900px)').matches; }
+
+    // Session store: kept until the page reloads
+    const IJ_DEMO_PIN = '111111';
+    const IJ_LIMIT = 100000;                      // UPI per-transaction limit (Rs)
+    const ijStore = { bal: [145000, 500000], pin: IJ_DEMO_PIN, pinSet: false, hist: [] };   // [Bank A, Bank C]
+
+    let ij = { tok: 0 };
+    let ijT = null;
+    const ijC = () => document.getElementById('ij-container');
+    const ijEsc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const ijLast4 = () => DEBIT_ACCOUNTS[ij.acct >= 0 ? ij.acct : 0].sub.slice(-4);
+    const ijBank = () => DEBIT_ACCOUNTS[ij.acct >= 0 ? ij.acct : 0].bank;
+    const ijDigits = n => Array.from({ length: n }, () => Math.floor(Math.random() * 10)).join('');
+    function ijInr(n) {   // Indian digit grouping, e.g. 145000 -> 1,45,000.00
+      const [i, d] = Number(n).toFixed(2).split('.');
+      let h = i.slice(-3); const r = i.slice(0, -3);
+      if (r) h = r.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + h;
+      return h + '.' + d;
+    }
+    function ijWhen(d) {
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' +
+             d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function showOnly(which) {
+      document.getElementById('home-tiles').style.display = which === 'tiles' ? 'flex' : 'none';
+      document.getElementById('mode-journey').style.display = which === 'journey' ? 'flex' : 'none';
+      document.getElementById('mode-experience').style.display = which === 'experience' ? 'flex' : 'none';
+      document.getElementById('home-btn').style.display = (which === 'tiles' || isMobileView()) ? 'none' : 'block';
+      if (which !== 'journey') ijReset();
+    }
+    function goHome() { showOnly('tiles'); lucide.createIcons(); }
+    function openJourney() { showOnly('journey'); ijReset(); ijHome(); fitJourney(); }
+    function openExperience() {
+      if (isMobileView()) return openJourney();
+      showOnly('experience');
+      fitPhone();
+      setTimeout(fitPhone, 60);
+    }
+    function fitJourney() {
+      const outer = document.getElementById('ij-fit-outer'), inner = document.getElementById('ij-fit');
+      if (!outer || !inner) return;
+      const scale = Math.min(1, outer.clientWidth / 370) || 1;
+      inner.style.transform = `translateX(-50%) scale(${scale})`;
+      outer.style.height = (730 * scale) + 'px';
+    }
+
+    // ---- engine helpers ----
+    function ijReset() {
+      ij = { tok: ij.tok + 1 };
+      clearTimeout(ijT);
+      ijBanner(false);
+      const c = ijC(); if (c) c.innerHTML = '';
+    }
+    function ijShow(html, cls) {
+      ij.tok++; clearTimeout(ijT); ijBanner(false);
+      const c = ijC(); if (!c) return;
+      c.innerHTML = html;
+      if (cls && c.firstElementChild) c.firstElementChild.classList.add(cls);
+      lucide.createIcons();
+    }
+    function ijAfter(ms, fn) {
+      const t = ij.tok; clearTimeout(ijT);
+      ijT = setTimeout(() => { if (ij.tok === t) fn(); }, ms);
+    }
+    function ijBanner(show) {
+      const b = document.getElementById('ij-sms-banner'); if (!b) return;
+      if (show) { b.classList.remove('hidden'); setTimeout(() => b.classList.remove('-translate-y-[150%]'), 50); }
+      else { b.classList.add('-translate-y-[150%]'); setTimeout(() => { if (b.classList.contains('-translate-y-[150%]')) b.classList.add('hidden'); }, 400); }
+    }
+    function ijConfetti() {
+      if (typeof confetti !== 'function' || typeof confetti.create !== 'function') return;
+      setTimeout(() => {
+        try {
+          const c = ijC(); if (!c) return;
+          c.querySelectorAll('.confetti-canvas').forEach(x => x.remove());
+          const canvas = document.createElement('canvas');
+          canvas.className = 'confetti-canvas';
+          canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:50;';
+          c.appendChild(canvas);
+          const fire = confetti.create(canvas, { resize: true, useWorker: false });
+          fire({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+          setTimeout(() => { try { fire.reset(); } catch (e) {} canvas.remove(); }, 4500);
+        } catch (e) { console.warn('Confetti error:', e); }
+      }, 30);
+    }
+    function ijBack() {
+      if (ij.screen === 'txn') return ijHistory();
+      if (ij.screen === 'details' && ij.flow !== 'qr') return ijEntry(false);
+      ijHome();
+    }
+    const ijBackBtn = (fn, cls) => `<button type="button" onclick="${fn || 'ijBack()'}" class="${cls || ''}"><i data-lucide="chevron-left" class="w-5 h-5 text-slate-500"></i></button>`;
+
+    // Item 6: link from the Journey to the matching backend flow (PC only)
+    function ijSeeHowBtn() {
+      return isMobileView() ? '' : `<button type="button" onclick="ijSeeHow()" class="w-full py-3 rounded-3xl border border-slate-300 bg-white text-slate-700 font-bold text-xs transition-transform duration-100 active:scale-95">See how this happens</button>`;
+    }
+    function ijSeeHow() {
+      const f = ij.flow;
+      openExperience();
+      if (f) setBackendTab(f);
+    }
+
+    // ---- Home ----
+    function ijHome(fromDone) {
+      ij = { tok: ij.tok };
+      const tile = (id, icon, label) => `<button type="button" onclick="ijStart('${id}')" class="flex flex-col items-center justify-center px-1 py-3 rounded-2xl text-center border border-slate-100 shadow-sm bg-white transition-transform duration-100 active:scale-95 active:bg-slate-50">
+          <i data-lucide="${icon}" class="w-6 h-6 text-orange-500 mb-2"></i>
+          <span class="text-[9px] leading-tight font-bold text-slate-700">${label}</span></button>`;
+      ijShow(`
+        <div class="h-full flex flex-col justify-between bg-white relative">
+          <div class="px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <div class="w-4 h-4 rounded-full border-4 border-orange-500"></div>
+              <span class="text-sm font-black text-slate-900 tracking-tight">myUPI <span class="text-orange-500">+</span></span>
+            </div>
+            <div class="flex items-center gap-3 text-slate-400">
+              <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+              <div class="w-6 h-6 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center"><i data-lucide="lightbulb" class="w-3.5 h-3.5 fill-amber-500"></i></div>
+            </div>
+          </div>
+          <div class="flex-1 px-4 mt-2">
+            <div class="grid grid-cols-4 gap-2">
+              ${tile('pay', 'send', 'Pay VPA')}${tile('mobile', 'smartphone', 'Pay Mobile')}${tile('balance', 'wallet', 'Check Balance')}${tile('pin', 'key-round', 'Reset PIN')}
+            </div>
+          </div>
+          <div class="border-t border-slate-100 px-6 py-2 pb-4 flex justify-between items-center bg-white text-slate-400">
+            <div class="flex flex-col items-center text-orange-500"><i data-lucide="home" class="w-5 h-5 mb-1"></i><span class="text-[9px] font-bold">Home</span></div>
+            <div class="flex flex-col items-center -mt-7">
+              <button type="button" onclick="ijStart('qr')" class="w-14 h-14 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/30 border-4 border-white ring-1 ring-orange-100 transition-transform duration-100 active:scale-90"><i data-lucide="qr-code" class="w-6 h-6"></i></button>
+              <span class="text-[9px] font-bold mt-1 text-slate-500">Scan QR</span>
+            </div>
+            <button type="button" onclick="ijHistory()" class="flex flex-col items-center active:scale-95 transition-transform"><i data-lucide="clock" class="w-5 h-5 mb-1"></i><span class="text-[9px] font-bold">History</span></button>
+          </div>
+        </div>`, fromDone ? 'screen-enter-back' : '');
+      ij.screen = 'home';
+    }
+    function ijStart(flow) {
+      ij = { tok: ij.tok, flow, amount: '', acct: -1, input: '', note: '' };
+      if (flow === 'pay' || flow === 'mobile') ijEntry(false);
+      else if (flow === 'qr') ijScan('dynamic');
+      else ijSelAcct();
+    }
+
+    // ---- Pay VPA / Pay Mobile: enter payee ----
+    function ijPayHeader(P) {
+      return `<div class="flex items-center gap-1.5 mb-3 text-slate-800">${ijBackBtn('ijBack()', '-ml-1 p-0.5')}<h3 class="text-sm font-bold">${P.screenTitle}</h3></div>`;
+    }
+    function ijValidInput(v) {
+      return ij.flow === 'mobile' ? /^[6-9]\d{9}$/.test(v) : /^[\w.\-]{2,}@[A-Za-z]{2,}$/.test(v);
+    }
+    function ijEntry(verifying) {
+      const P = PAYEE[ij.flow];
+      ij.screen = verifying ? 'verifying' : 'entry';
+      const prefix = P.prefix ? `<span class="pr-2.5 mr-0.5 border-r border-slate-200 text-sm font-bold text-slate-600">${P.prefix}</span>` : '';
+      const field = verifying
+        ? `<span class="font-mono text-[15px] text-slate-900 tracking-wide">${ijEsc(ij.input)}</span>`
+        : `<input id="ij-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${ij.flow === 'mobile' ? 'numeric' : 'email'}"
+             placeholder="${P.placeholder}" oninput="ijOnInput(this)" onkeydown="if(event.key==='Enter')ijVerify()"
+             class="flex-1 min-w-0 bg-transparent outline-none font-mono text-[15px] text-slate-900 tracking-wide placeholder:text-[13px] placeholder:text-slate-400"/>`;
+      ijShow(`
+        <div class="h-full flex flex-col py-2 px-2 bg-slate-50">
+          ${ijPayHeader(P)}
+          <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div>
+              <span class="text-[11px] font-bold text-slate-500">${P.fieldLabel}</span>
+              <div class="mt-2 flex items-center gap-2 rounded-2xl px-3 py-3 border-2 ${verifying ? 'border-slate-200 bg-slate-50' : 'border-orange-400 bg-white'} transition-colors">
+                ${prefix}${field}
+              </div>
+              <p class="text-[10px] text-slate-400 mt-2 leading-snug">${P.hint}</p>
+              <p id="ij-err" class="hidden text-[10px] font-bold text-red-600 mt-1"></p>
+            </div>
+            ${verifying ? `
+              <div class="w-full py-3 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center gap-2.5">
+                <div class="w-5 h-5 border-[3px] border-orange-200 border-t-orange-500 rounded-full animate-spinner"></div>
+                <span class="text-sm font-bold text-orange-600">${P.verifyingText}</span>
+              </div>` : `
+              <button type="button" id="ij-verify" onclick="ijVerify()" class="w-full py-3.5 rounded-2xl bg-slate-300 text-white font-bold text-sm transition-all duration-150">Verify</button>`}
+          </div>
+        </div>`);
+      if (!verifying) {
+        const i = document.getElementById('ij-input');
+        if (i) { i.value = ij.input || ''; ijOnInput(i); i.focus(); }
+      }
+    }
+    function ijOnInput(el) {
+      if (ij.flow === 'mobile') el.value = el.value.replace(/\D/g, '').slice(0, 10);
+      ij.input = el.value.trim();
+      const ok = ijValidInput(ij.input);
+      const b = document.getElementById('ij-verify');
+      if (b) b.className = 'w-full py-3.5 rounded-2xl text-white font-bold text-sm transition-all duration-150 ' + (ok ? 'bg-orange-500 shadow-lg shadow-orange-500/20 active:scale-95' : 'bg-slate-300');
+      const e = document.getElementById('ij-err'); if (e) e.classList.add('hidden');
+    }
+    function ijVerify() {
+      if (ij.screen !== 'entry') return;
+      if (!ijValidInput(ij.input)) {
+        const e = document.getElementById('ij-err');
+        if (e) { e.textContent = ij.flow === 'mobile' ? 'Enter a valid 10-digit mobile number' : "Enter a valid UPI ID, e.g. name@bank"; e.classList.remove('hidden'); }
+        return;
+      }
+      const P = PAYEE[ij.flow];
+      let name, vpa = null, mobileShown = null;
+      if (ij.flow === 'pay') {
+        name = ij.input.toLowerCase() === P.input ? P.name : ij.input.split('@')[0].replace(/[._\-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      } else {
+        const d = ij.input === P.input;
+        name = d ? P.name : 'Payee •• ' + ij.input.slice(-4);
+        vpa = d ? P.vpa : ij.input + '@mypsp';
+        mobileShown = '+91 ' + ij.input;
+      }
+      ij.payee = Object.assign({}, P, { name, vpa, mobileShown });
+      ijEntry(true);
+      ijAfter(1200, ijDetails);
+    }
+
+    // ---- QR scan: dynamic (amount pre-filled) or static (enter amount) ----
+    function ijScan(type) {
+      ij.qrType = type || 'dynamic';
+      ij.screen = 'scan';
+      const corner = pos => `<div class="qr-corner absolute w-9 h-9 border-orange-400 ${pos}"></div>`;
+      const chip = (t, label) => `<button type="button" onclick="ijScan('${t}')" class="px-3 py-1.5 rounded-full text-[10px] font-bold border transition-colors ${ij.qrType === t ? 'bg-orange-500 border-orange-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-300'}">${label}</button>`;
+      ijShow(`
+        <div class="h-full flex flex-col bg-slate-900 text-white">
+          <div class="px-3 py-3 flex items-center gap-2">
+            ${ijBackBtn('ijBack()', '')}
+            <h3 class="text-sm font-bold">Scan QR Code</h3>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-center px-6 pb-8">
+            <div class="relative w-[240px] h-[240px]">
+              ${corner('top-0 left-0 border-t-4 border-l-4 rounded-tl-2xl')}${corner('top-0 right-0 border-t-4 border-r-4 rounded-tr-2xl')}
+              ${corner('bottom-0 left-0 border-b-4 border-l-4 rounded-bl-2xl')}${corner('bottom-0 right-0 border-b-4 border-r-4 rounded-br-2xl')}
+              <div class="absolute inset-4 rounded-xl bg-white p-2 overflow-hidden">${qrSvgHtml()}<div id="ij-scan-line" class="scan-line"></div></div>
+              <div id="ij-qr-detected" class="hidden absolute inset-4 rounded-xl bg-emerald-500/25 items-center justify-center">
+                <div class="pop-in w-16 h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/40"><i data-lucide="check" class="w-9 h-9 stroke-[4]"></i></div>
+              </div>
+            </div>
+            <p id="ij-qr-status" class="mt-6 text-xs font-bold text-slate-300 text-center">Align the QR code within the frame</p>
+            <div class="mt-5 flex items-center justify-center gap-2">
+              ${chip('dynamic', 'Dynamic QR (₹750)')}${chip('static', 'Static QR (enter amount)')}
+            </div>
+          </div>
+        </div>`);
+      const tok = ij.tok, live = () => ij.tok === tok;
+      (async () => {
+        await sleep(600); if (!live()) return;
+        const st = document.getElementById('ij-qr-status'); if (st) st.textContent = 'Scanning...';
+        await sleep(1900); if (!live()) return;
+        const line = document.getElementById('ij-scan-line'); if (line) line.style.display = 'none';
+        document.querySelectorAll('#ij-container .qr-corner').forEach(c => { c.classList.remove('border-orange-400'); c.classList.add('border-emerald-400'); });
+        const det = document.getElementById('ij-qr-detected'); if (det) { det.classList.remove('hidden'); det.classList.add('flex'); }
+        if (st) { st.textContent = 'QR detected'; st.classList.remove('text-slate-300'); st.classList.add('text-emerald-400'); }
+        await sleep(900); if (!live()) return;
+        const dyn = ij.qrType === 'dynamic';
+        ij.payee = Object.assign({}, PAYEE.qr, dyn ? {} : { amountLabel: 'Enter Amount' });
+        ij.amount = dyn ? PAYEE.qr.amount : '';
+        ijDetails();
+      })();
+    }
+
+    // ---- Payee details: amount, note, account, Proceed to Pay ----
+    function ijAcctRow(i, selected) {
+      const a = DEBIT_ACCOUNTS[i];
+      return `<button type="button" id="ij-acct-${i}" onclick="ijPickAcct(${i})" class="w-full text-left flex items-center gap-3 p-2.5 rounded-2xl border-2 transition-all duration-150 ${selected ? 'border-orange-400 bg-orange-50' : 'border-slate-200 bg-white'}">
+          <div class="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm shrink-0">${a.letter}</div>
+          <div class="flex-1 min-w-0"><div class="text-xs font-bold text-slate-900">${a.bank}</div><div class="text-[11px] text-slate-500 font-mono">${a.sub}</div></div>
+          <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${selected ? 'border-orange-500' : 'border-slate-300'}"><span class="w-2 h-2 rounded-full bg-orange-500 ${selected ? '' : 'hidden'}"></span></div>
+        </button>`;
+    }
+    function ijDetails() {
+      const P = ij.payee, fixedAmt = ij.flow === 'qr' && ij.qrType === 'dynamic';
+      ij.screen = 'details';
+      const payeeSub = P.vpa
+        ? `<div class="text-[11px] text-slate-500 font-mono truncate">${ijEsc(P.vpa)}</div><div class="text-[10px] text-slate-400 font-mono">${ijEsc(P.mobileShown)}</div>`
+        : `<div class="text-[10px] text-emerald-700 font-bold">${P.verifiedLabel || 'Verified payee'}</div>`;
+      const amount = fixedAmt
+        ? `<span id="ij-amt-text">${ij.amount}</span>`
+        : `<input id="ij-amt" inputmode="numeric" maxlength="6" placeholder="0" value="${ij.amount}" oninput="ijOnAmount(this)"
+             class="bg-transparent outline-none font-mono font-black tracking-tight text-slate-900 placeholder:text-slate-300" style="width:${Math.max(1, ij.amount.length)}ch"/>`;
+      ijShow(`
+        <div class="h-full flex flex-col py-2 px-2 bg-slate-50 overflow-y-auto">
+          ${ijPayHeader(P)}
+          <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 pop-in">
+              <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0"><i data-lucide="${P.icon}" class="w-5 h-5"></i></div>
+              <div class="min-w-0">
+                <div class="text-sm font-bold text-slate-900 flex items-center gap-1"><span>${ijEsc(P.name)}</span><i data-lucide="badge-check" class="w-4 h-4 text-emerald-600 fill-emerald-100"></i></div>
+                ${payeeSub}
+              </div>
+            </div>
+            <div class="text-center py-3 bg-slate-50 rounded-2xl border border-slate-100">
+              <span class="text-[10px] tracking-wider text-slate-500 font-bold block mb-1">${P.amountLabel || 'Enter Amount'}</span>
+              <div class="flex items-center justify-center text-4xl font-black text-slate-900 font-mono tracking-tight"><span>₹</span>${amount}</div>
+              <p id="ij-amt-err" class="hidden mt-1 text-[10px] font-bold text-red-600">UPI limit per transaction is ₹1,00,000</p>
+            </div>
+            <input id="ij-note" maxlength="50" placeholder="Add a note (optional)" value="${ijEsc(ij.note || '')}" oninput="ij.note=this.value"
+              class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-700 placeholder:text-slate-400 outline-none focus:border-orange-400"/>
+            <div id="ij-acct-wrap" class="space-y-2 transition-opacity duration-300">
+              <span class="text-[10px] text-slate-400 block font-bold">Paying From</span>
+              <div class="space-y-2">${ijAcctRow(0, ij.acct === 0)}${ijAcctRow(1, ij.acct === 1)}</div>
+            </div>
+            <button type="button" id="ij-pay-btn" onclick="ijProceed()" class="w-full py-3.5 rounded-2xl text-white font-bold text-sm transition-all duration-150 bg-slate-300">Proceed to Pay</button>
+          </div>
+        </div>`);
+      ijAmtState();
+      const a = document.getElementById('ij-amt'); if (a && !ij.amount) a.focus();
+    }
+    function ijOnAmount(el) {
+      el.value = el.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 6);
+      el.style.width = Math.max(1, el.value.length) + 'ch';
+      ij.amount = el.value;
+      ijAmtState();
+    }
+    function ijAmtState() {
+      const n = parseInt(ij.amount || '0', 10);
+      const w = document.getElementById('ij-acct-wrap');
+      if (w) { w.classList.toggle('opacity-40', !(n > 0)); w.classList.toggle('pointer-events-none', !(n > 0)); }
+      const e = document.getElementById('ij-amt-err'); if (e) e.classList.toggle('hidden', !(n > IJ_LIMIT));
+      ijPayBtn();
+    }
+    function ijPickAcct(i) {
+      ij.acct = i;
+      [0, 1].forEach(n => { const r = document.getElementById('ij-acct-' + n); if (r) r.outerHTML = ijAcctRow(n, n === i); });
+      ijPayBtn();
+    }
+    function ijPayOk() { const n = parseInt(ij.amount || '0', 10); return n > 0 && n <= IJ_LIMIT && ij.acct >= 0; }
+    function ijPayBtn() {
+      const b = document.getElementById('ij-pay-btn'); if (!b) return;
+      const ok = ijPayOk();
+      b.disabled = !ok;
+      b.className = 'w-full py-3.5 rounded-2xl text-white font-bold text-sm transition-all duration-150 ' + (ok ? 'bg-orange-500 shadow-lg shadow-orange-500/20 active:scale-95' : 'bg-slate-300');
+    }
+    const ijDemoHint = () => ijStore.pinSet ? null : { html: 'Demo PIN: ' + IJ_DEMO_PIN, cls: 'text-slate-500' };
+    function ijProceed() {
+      if (!ijPayOk()) return;
+      ijKeypad({
+        title: 'ENTER UPI PIN', sub: '₹' + ij.amount + '.00', slots: 6, masked: true, baseHint: ijDemoHint(),
+        done: v => { ij.pinOk = (v === ijStore.pin); ijProcessing(1500, ijFinishPay); }
+      });
+    }
+    // Debit: success updates the balance; amount above the balance fails with Z9
+    function ijFinishPay() {
+      const amt = parseInt(ij.amount, 10), P = ij.payee, a = DEBIT_ACCOUNTS[ij.acct];
+      const t = { id: 'MYUPI' + ijDigits(15), rrn: '4' + ijDigits(11), ts: new Date(), amount: amt, payee: P.name, vpa: P.vpa || null,
+                  bank: a.bank, last4: a.sub.slice(-4), note: (ij.note || '').trim(), status: 'success' };
+      if (!ij.pinOk) {            // wrong PIN: the flow carries on and ends on a failure screen
+        t.status = 'failed'; t.code = 'ZM'; t.reason = 'Incorrect PIN';
+        ijStore.hist.unshift(t); ij.txn = t;
+        return ijFailTxn();
+      }
+      if (amt > ijStore.bal[ij.acct]) {
+        t.status = 'failed'; t.code = 'Z9'; t.reason = 'Insufficient funds';
+        ijStore.hist.unshift(t); ij.txn = t;
+        return ijFailTxn();
+      }
+      ijStore.bal[ij.acct] -= amt;
+      ijStore.hist.unshift(t); ij.txn = t;
+      ijSuccessTxn();
+    }
+
+    // ---- Select account (Check Balance lists both accounts; Reset PIN uses Bank A) ----
+    function ijSelAcct() {
+      ij.screen = 'selacct';
+      const list = ij.flow === 'balance' ? [0, 1] : [0];
+      const card = i => { const a = DEBIT_ACCOUNTS[i]; return `
+          <button type="button" onclick="ijAcctChosen(${i})" class="w-full text-left p-4 rounded-3xl bg-white border border-slate-200 shadow-sm transition-transform duration-100 active:scale-95 active:bg-slate-50 active:border-orange-400">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold">${a.letter}</div>
+                <div><div class="text-sm font-bold text-slate-900">${a.bank}</div><div class="text-xs text-slate-500 font-mono">${a.sub}</div></div>
+              </div>
+              <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+            </div>
+          </button>`; };
+      ijShow(`
+        <div class="h-full flex flex-col py-4 px-2">
+          <div class="flex items-center gap-2 mb-6">${ijBackBtn('ijBack()', '')}<h3 class="text-sm font-bold text-slate-900">Select Bank Account</h3></div>
+          <div class="space-y-3">${list.map(card).join('')}</div>
+        </div>`);
+    }
+    function ijAcctChosen(i) {
+      ij.acct = i;
+      if (ij.flow === 'balance') ijKeypad({ title: 'ENTER UPI PIN', sub: 'BALANCE', slots: 6, masked: true, baseHint: ijDemoHint(),
+        done: v => { ij.pinOk = (v === ijStore.pin); ijProcessing(1500, ijBalanceScreen); } });
+      else ijPinStep(1);
+    }
+
+    // ---- Secure keypad (Common Library) ----
+    function ijKeypad(cfg) {
+      ij.screen = 'kp';
+      ij.kp = Object.assign({ buf: '', masked: false, locked: false }, cfg);
+      const k = ij.kp;
+      ijShow(`
+        <div class="absolute inset-0 bg-[#0c2264] z-50 flex flex-col justify-between text-white">
+          <div>
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-slate-200">
+              <div class="flex items-center gap-2">
+                ${ijBackBtn('ijHome()', '')}
+                <span class="text-sm font-bold text-slate-900">${ijBank()}</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="text-sm font-black italic text-[#1b3a82]">UPI</span>
+                <div class="flex flex-col leading-none"><span class="w-2 h-2 bg-orange-500 transform skew-x-[-15deg]"></span><span class="w-2 h-2 bg-emerald-600 transform skew-x-[-15deg] mt-0.5"></span></div>
+              </div>
+            </div>
+            <div class="bg-[#12368c] px-4 py-3 flex items-center justify-between font-medium">
+              <span class="font-mono text-slate-200 tracking-widest text-sm">•••••••••${ijLast4()}</span>
+              <span class="font-bold text-xs uppercase tracking-wider">${k.sub}</span>
+            </div>
+          </div>
+          <div class="flex-1 bg-white flex flex-col justify-center items-center px-6">
+            <span class="text-[11px] font-bold tracking-widest text-[#12368c] uppercase mb-6 text-center">${k.title}</span>
+            <div class="flex justify-center items-center gap-4 mb-2">
+              ${Array.from({ length: k.slots }).map((_, i) => `<div class="w-8 flex flex-col items-center"><span id="ij-dot-${i}" class="h-6 text-xl font-black text-[#12368c] leading-none mb-1 font-mono"></span><div id="ij-line-${i}" class="w-full h-0.5 bg-slate-400"></div></div>`).join('')}
+            </div>
+            <div id="ij-hint" class="min-h-6 mt-1 flex items-center justify-center text-[9px] font-bold uppercase text-emerald-600 text-center"></div>
+          </div>
+          <div class="bg-[#f0f2f5] border-t border-slate-200 text-slate-800 pb-4">
+            <div class="grid grid-cols-3 text-center text-2xl font-normal text-[#12368c] py-2">
+              ${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" onclick="ijKey('${n}')" class="py-4 rounded-xl mx-2 transition-all duration-100 active:bg-slate-300 active:scale-90">${n}</button>`).join('')}
+              <button type="button" onclick="ijKey('del')" class="py-4 active:scale-90"><i data-lucide="delete" class="w-7 h-7 mx-auto stroke-[2.5]"></i></button>
+              <button type="button" onclick="ijKey('0')" class="py-4 rounded-xl mx-2 transition-all duration-100 active:bg-slate-300 active:scale-90">0</button>
+              <div class="flex items-center justify-center py-2">
+                <button type="button" onclick="ijKpSubmit()" class="w-14 h-14 rounded-full bg-[#1b3a82] text-white flex items-center justify-center shadow-md transition-all duration-100 active:bg-[#12285a] active:scale-90"><i data-lucide="check" class="w-7 h-7 stroke-[3]"></i></button>
+              </div>
+            </div>
+            ${k.footMsg ? `<div class="text-center text-[10px] font-bold text-red-600 px-4 pt-1">${k.footMsg}</div>` : ''}
+            <div class="flex items-center justify-center gap-1 mt-2 pb-2 opacity-50"><span class="text-[9px] tracking-widest uppercase font-bold">Powered By UPI</span></div>
+          </div>
+        </div>`);
+      if (k.baseHint) ijHint(k.baseHint.html, k.baseHint.cls);
+      if (k.onOpen) k.onOpen();
+    }
+    function ijHint(html, cls) {
+      const h = document.getElementById('ij-hint'); if (!h) return;
+      h.className = 'min-h-6 mt-1 flex items-center justify-center text-[9px] font-bold uppercase text-center ' + (cls || 'text-emerald-600');
+      h.innerHTML = html;
+      lucide.createIcons();
+    }
+    function ijKpPaint() {
+      const k = ij.kp; if (!k) return;
+      for (let i = 0; i < k.slots; i++) {
+        const d = document.getElementById('ij-dot-' + i), l = document.getElementById('ij-line-' + i), has = i < k.buf.length;
+        if (d) d.textContent = has ? (k.masked ? '●' : k.buf[i]) : '';
+        if (l) l.className = has ? 'w-full h-1 bg-[#12368c]' : 'w-full h-0.5 bg-slate-400';
+      }
+    }
+    function ijKey(key) {
+      const k = ij.kp; if (!k || k.locked) return;
+      if (key === 'del') k.buf = k.buf.slice(0, -1);
+      else if (k.buf.length < k.slots) k.buf += key;
+      if (k.baseHint) ijHint(k.baseHint.html, k.baseHint.cls); else ijHint('');
+      ijKpPaint();
+    }
+    function ijKpClear() { ij.kp.buf = ''; ijKpPaint(); }
+    function ijKpSubmit() {
+      const k = ij.kp; if (!k || k.locked) return;
+      if (k.buf.length < k.slots) return ijHint(`Enter all ${k.slots} digits`, 'text-red-600');
+      k.done(k.buf);
+    }
+    // Item 9: physical keyboard on the keypad screens
+    document.addEventListener('keydown', e => {
+      if (ij.screen !== 'kp') return;
+      const jm = document.getElementById('mode-journey');
+      if (!jm || jm.style.display === 'none') return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (/^[0-9]$/.test(e.key)) { ijKey(e.key); e.preventDefault(); }
+      else if (e.key === 'Backspace') { ijKey('del'); e.preventDefault(); }
+      else if (e.key === 'Enter') { if (t && t.tagName === 'BUTTON') return; ijKpSubmit(); e.preventDefault(); }
+      else if (e.key === 'Escape') { ijHome(); }
+    });
+
+    // ---- Reset PIN: card -> expiry -> OTP (auto-read) -> new PIN -> confirm ----
+    function ijPinStep(n, msg) {
+      if (n === 1) ijKeypad({ title: 'ENTER LAST 6 DIGITS OF DEBIT CARD', sub: 'SET PIN', slots: 6, done: () => ijPinStep(2) });
+      if (n === 2) ijKeypad({ title: 'ENTER CARD EXPIRY (MMYY)', sub: 'SET PIN', slots: 4,
+        done: v => { if (!/^(0[1-9]|1[0-2])\d\d$/.test(v)) { ijHint('Enter a valid expiry (MMYY)', 'text-red-600'); return ijKpClear(); } ijPinStep(3); } });
+      if (n === 3) ijKeypad({ title: 'BANK SMS OTP (AUTO-READ)', sub: 'SET PIN', slots: 6, locked: true,
+        onOpen: () => {
+          ijHint(`<i data-lucide="loader" class="w-3 h-3 mr-1 animate-spin"></i> <span class="animate-pulse text-amber-500">Waiting for Bank SMS...</span>`);
+          ijAfter(1600, () => {
+            ij.kp.buf = '849201'; ij.kp.locked = false; ijKpPaint();
+            ijBanner(true);
+            ijHint(`<i data-lucide="check-circle-2" class="w-3 h-3 mr-1 text-emerald-600"></i> <span class="text-emerald-600">Auto-fetched from Bank A SMS</span>`);
+            setTimeout(() => ijBanner(false), 4000);
+          });
+        },
+        done: () => { ijBanner(false); ijPinStep(4); } });
+      if (n === 4) ijKeypad({ title: 'ENTER 6-DIGIT UPI PIN', sub: 'SET PIN', slots: 6, masked: true, footMsg: msg, done: v => { ij.newPin = v; ijPinStep(5); } });
+      if (n === 5) ijKeypad({ title: 'CONFIRM 6-DIGIT UPI PIN', sub: 'SET PIN', slots: 6, masked: true,
+        done: v => {
+          if (v !== ij.newPin) return ijPinStep(4, "PIN doesn't match. Please enter a new PIN again.");
+          ijStore.pin = v; ijStore.pinSet = true;      // the new PIN is now required for payments and balance checks
+          ijProcessing(1500, ijSuccessPin);
+        } });
+    }
+
+    // ---- Processing + result screens ----
+    function ijProcessing(ms, next) {
+      ij.screen = 'busy';
+      ijShow(`
+        <div class="h-full flex flex-col items-center justify-center text-center p-4">
+          <div class="w-16 h-16 border-4 border-slate-200 border-t-orange-500 rounded-full animate-spinner mb-6"></div>
+          <span class="text-sm font-bold text-slate-800 mb-1">Processing...</span>
+          <p class="text-xs text-slate-500">Securely routing your request.</p>
+        </div>`);
+      ijAfter(ms, next);
+    }
+    const ijRow = (k, v) => `<div class="flex justify-between items-center gap-3 text-slate-500"><span class="shrink-0">${k}</span><span class="text-slate-900 font-bold text-right break-all">${v}</span></div>`;
+    function ijReceiptRows(t) {
+      const acct = `${t.bank} (•••• ${t.last4})`;
+      const rows = t.status === 'success'
+        ? [['Switch RRN:', t.rrn], ['UPI Txn ID:', t.id], ['Date & time:', ijWhen(t.ts)], ['Debited A/C:', acct]]
+        : [['Response code:', t.code], ['Reason:', t.reason], ['UPI Txn ID:', t.id], ['Date & time:', ijWhen(t.ts)], ['A/C:', acct]];
+      if (t.vpa) rows.push(['Payee VPA:', ijEsc(t.vpa)]);
+      if (t.note) rows.push(['Note:', ijEsc(t.note)]);
+      return rows.map(r => ijRow(r[0], r[1])).join('');
+    }
+    function ijSuccessTxn() {
+      ij.screen = 'done';
+      const t = ij.txn;
+      ijShow(`
+        <div class="h-full flex flex-col justify-between py-5 px-4 bg-white overflow-y-auto">
+          <div class="flex flex-col items-center justify-center text-center mt-4">
+            <div class="w-20 h-20 rounded-full bg-emerald-50 border-4 border-emerald-400 text-emerald-500 flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/10"><i data-lucide="check" class="w-10 h-10 stroke-[4]"></i></div>
+            <h2 class="text-3xl font-black font-mono text-slate-900 tracking-tight">₹${t.amount}.00</h2>
+            <span class="text-sm font-bold text-slate-800 mt-2">Payment Successful</span>
+            <p class="text-xs text-slate-500 mt-1">Paid to ${ijEsc(t.payee)}</p>
+          </div>
+          <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-4 text-left text-[11px] font-mono space-y-2.5 shadow-sm my-4">${ijReceiptRows(t)}</div>
+          <div class="space-y-2">
+            ${ijSeeHowBtn()}
+            <button type="button" onclick="ijHome(true)" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 active:scale-95">Done</button>
+          </div>
+        </div>`);
+      ijConfetti();
+    }
+    function ijFailTxn() {
+      ij.screen = 'done';
+      const t = ij.txn;
+      ijShow(`
+        <div class="h-full flex flex-col justify-between py-5 px-4 bg-white overflow-y-auto">
+          <div class="flex flex-col items-center justify-center text-center mt-4">
+            <div class="w-20 h-20 rounded-full bg-red-50 border-4 border-red-400 text-red-500 flex items-center justify-center mb-5 shadow-lg shadow-red-500/10"><i data-lucide="x" class="w-10 h-10 stroke-[4]"></i></div>
+            <h2 class="text-3xl font-black font-mono text-slate-900 tracking-tight">₹${t.amount}.00</h2>
+            <span class="text-sm font-bold text-slate-800 mt-2">Payment Failed</span>
+            <p class="text-xs text-red-600 font-bold mt-1">${t.code} · ${t.reason}</p>
+            <p class="text-xs text-slate-500 mt-1">Not paid to ${ijEsc(t.payee)}. No money was debited.</p>
+          </div>
+          <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-4 text-left text-[11px] font-mono space-y-2.5 shadow-sm my-4">${ijReceiptRows(t)}</div>
+          <button type="button" onclick="ijHome(true)" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 active:scale-95">Done</button>
+        </div>`);
+    }
+    function ijSuccessPin() {
+      ij.screen = 'done';
+      ijShow(`
+        <div class="h-full flex flex-col justify-center items-center text-center p-6 bg-white">
+          <div class="w-20 h-20 rounded-full bg-emerald-50 border-4 border-emerald-400 text-emerald-500 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/10"><i data-lucide="check" class="w-10 h-10 stroke-[4]"></i></div>
+          <h2 class="text-xl font-black text-slate-900">PIN Set Successfully</h2>
+          <p class="text-sm text-slate-500 mt-2 max-w-[240px]">Your 6-digit UPI PIN is now active for Bank A.</p>
+          <div class="w-full mt-10 space-y-2">
+            ${ijSeeHowBtn()}
+            <button type="button" onclick="ijHome(true)" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 active:scale-95">Done</button>
+          </div>
+        </div>`);
+      ijConfetti();
+    }
+    function ijBalanceFail() {
+      ij.screen = 'done';
+      ijShow(`
+        <div class="h-full flex flex-col justify-between py-5 px-4 bg-white overflow-y-auto">
+          <div class="flex flex-col items-center justify-center text-center mt-10">
+            <div class="w-20 h-20 rounded-full bg-red-50 border-4 border-red-400 text-red-500 flex items-center justify-center mb-5 shadow-lg shadow-red-500/10"><i data-lucide="x" class="w-10 h-10 stroke-[4]"></i></div>
+            <h2 class="text-xl font-black text-slate-900">Balance Check Failed</h2>
+            <p class="text-xs text-red-600 font-bold mt-2">ZM · Incorrect PIN</p>
+            <p class="text-xs text-slate-500 mt-1 max-w-[240px]">The UPI PIN entered was incorrect. No balance was fetched for ${ijBank()} (•••• ${ijLast4()}).</p>
+          </div>
+          <button type="button" onclick="ijHome(true)" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 active:scale-95">Done</button>
+        </div>`);
+    }
+    function ijBalanceScreen() {
+      if (!ij.pinOk) return ijBalanceFail();
+      ij.screen = 'done';
+      ijShow(`
+        <div class="h-full flex flex-col py-6 px-4 bg-slate-50">
+          <div class="flex items-center gap-2 mb-8 text-slate-800">${ijBackBtn('ijHome()', '')}<h3 class="text-base font-bold">Available Balance</h3></div>
+          <div class="flex-1 flex flex-col items-center justify-center -mt-10">
+            <div class="w-16 h-16 rounded-3xl bg-white shadow-sm border border-slate-200 flex items-center justify-center mb-6 text-orange-500"><i data-lucide="landmark" class="w-8 h-8"></i></div>
+            <span class="text-sm font-bold text-slate-600 mb-2">${ijBank()} (•••• ${ijLast4()})</span>
+            <div class="text-4xl font-black font-mono text-slate-900 tracking-tight">₹${ijInr(ijStore.bal[ij.acct])}</div>
+          </div>
+          <div class="space-y-2 mb-4">
+            ${ijSeeHowBtn()}
+            <button type="button" onclick="ijHome(true)" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 active:scale-95">Back to Homepage</button>
+          </div>
+        </div>`);
+    }
+
+    // ---- History (this session) ----
+    function ijHistory() {
+      ij = { tok: ij.tok };
+      ij.screen = 'history';
+      const h = ijStore.hist;
+      const rows = h.length ? h.map((t, i) => {
+        const ok = t.status === 'success';
+        return `<button type="button" onclick="ijTxn(${i})" class="w-full text-left flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-200 shadow-sm transition-transform duration-100 active:scale-[0.98]">
+          <div class="w-9 h-9 rounded-xl ${ok ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'} flex items-center justify-center shrink-0"><i data-lucide="${ok ? 'check' : 'x'}" class="w-4 h-4 stroke-[3]"></i></div>
+          <div class="flex-1 min-w-0"><div class="text-xs font-bold text-slate-900 truncate">${ijEsc(t.payee)}</div><div class="text-[10px] text-slate-500">${ijWhen(t.ts)}</div></div>
+          <div class="text-right shrink-0"><div class="text-xs font-black font-mono text-slate-900">₹${ijInr(t.amount)}</div><div class="text-[9px] font-bold ${ok ? 'text-emerald-600' : 'text-red-500'}">${ok ? 'Success' : 'Failed · ' + t.code}</div></div>
+        </button>`;
+      }).join('') : `<div class="flex-1 flex flex-col items-center justify-center text-center text-slate-400"><i data-lucide="clock" class="w-8 h-8 mb-2"></i><span class="text-xs font-bold">No transactions yet</span></div>`;
+      ijShow(`
+        <div class="h-full flex flex-col py-4 px-3 bg-slate-50">
+          <div class="flex items-center gap-2 mb-4">${ijBackBtn('ijHome()', '')}<h3 class="text-sm font-bold text-slate-900">History</h3></div>
+          <div class="flex-1 overflow-y-auto flex flex-col gap-2">${rows}</div>
+        </div>`);
+    }
+    function ijTxn(i) {
+      const t = ijStore.hist[i]; if (!t) return ijHistory();
+      const ok = t.status === 'success';
+      ij.screen = 'txn';
+      ijShow(`
+        <div class="h-full flex flex-col py-4 px-4 bg-white overflow-y-auto">
+          <div class="flex items-center gap-2 mb-5">${ijBackBtn('ijBack()', '')}<h3 class="text-sm font-bold text-slate-900">Transaction details</h3></div>
+          <div class="flex flex-col items-center text-center mb-5">
+            <div class="w-14 h-14 rounded-full ${ok ? 'bg-emerald-50 border-4 border-emerald-400 text-emerald-500' : 'bg-red-50 border-4 border-red-400 text-red-500'} flex items-center justify-center mb-3"><i data-lucide="${ok ? 'check' : 'x'}" class="w-7 h-7 stroke-[4]"></i></div>
+            <div class="text-2xl font-black font-mono text-slate-900">₹${ijInr(t.amount)}</div>
+            <div class="text-xs font-bold ${ok ? 'text-emerald-600' : 'text-red-600'} mt-1">${ok ? 'Payment Successful' : 'Payment Failed'}</div>
+            <div class="text-xs text-slate-500 mt-1">${ok ? 'Paid to' : 'Not paid to'} ${ijEsc(t.payee)}</div>
+          </div>
+          <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-4 text-left text-[11px] font-mono space-y-2.5 shadow-sm">${ijReceiptRows(t)}</div>
+        </div>`);
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       setBackendTab('pay');
+      if (isMobileView()) openJourney(); else showOnly('tiles');
       lucide.createIcons();
     });
   
     fitPhone();
-    window.addEventListener('resize', fitPhone);
+    window.addEventListener('resize', () => { fitPhone(); fitJourney(); });
     if (typeof ResizeObserver !== 'undefined') {
       const fitEl = document.getElementById('phone-fit-outer');
       if (fitEl) new ResizeObserver(fitPhone).observe(fitEl);
     }
   </script>
+  <button id="home-btn" onclick="goHome()" style="display:none" class="fixed bottom-4 left-4 z-[80] px-4 py-2 rounded-xl bg-slate-900 border border-slate-600 text-white text-xs font-bold shadow-lg">&#8962; Home</button>
 </body>
 </html>
