@@ -2819,8 +2819,60 @@
     function ijPayHeader(P) {
       return `<div class="flex items-center gap-1.5 mb-3 text-slate-800">${ijBackBtn('ijBack()', '-ml-1 p-0.5')}<h3 class="text-sm font-bold">${P.screenTitle}</h3></div>`;
     }
+    // ---- On-screen keyboard for phones (overlay inside the phone screen) ----
+    const KB_VPA = [
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['q','w','e','r','t','y','u','i','o','p'],
+      ['a','s','d','f','g','h','j','k','l'],
+      ['z','x','c','v','b','n','m','@','.','-']
+    ];
+    const KB_DIGITS = [['1','2','3'],['4','5','6'],['7','8','9'],['0']];
+    function ijKbOpen(field) {
+      if (!isMobileView()) return;
+      const isAmt = field === 'amount';
+      const el = document.getElementById(isAmt ? 'ij-amt' : 'ij-input');
+      const c = ijC();
+      if (!el || !c) return;
+      ijKbClose();
+      const vpa = !isAmt && ij.flow === 'pay';
+      const rows = vpa ? KB_VPA : KB_DIGITS;
+      const key = k => `<button type="button" data-k="${k}" class="flex-1 min-w-0 h-9 rounded-md bg-white text-slate-900 font-semibold text-base shadow-sm active:bg-slate-100">${k}</button>`;
+      const kb = document.createElement('div');
+      kb.id = 'ij-kb';
+      kb.className = 'absolute inset-x-0 bottom-0 z-[60] bg-slate-200 border-t border-slate-300 px-1.5 pt-2 pb-3 shadow-2xl';
+      kb.innerHTML = rows.map(r => `<div class="flex gap-1 mb-1.5">${r.map(key).join('')}</div>`).join('')
+        + `<div class="flex gap-1.5 mt-1">
+             <button type="button" data-k="⌫" class="flex-1 h-9 rounded-md bg-slate-300 text-slate-800 font-bold text-sm active:bg-slate-400">⌫</button>
+             <button type="button" data-k="done" class="flex-[2] h-9 rounded-md bg-orange-500 text-white font-bold text-sm active:scale-95">Done</button>
+           </div>`;
+      kb.addEventListener('click', e => {
+        const b = e.target.closest('[data-k]');
+        if (b) ijKbKey(b.dataset.k, el, isAmt);
+      });
+      c.appendChild(kb);
+    }
+    function ijKbClose() {
+      const kb = document.getElementById('ij-kb');
+      if (kb) kb.remove();
+    }
+    function ijKbKey(k, el, isAmt) {
+      if (k === 'done') return ijKbClose();
+      let v = el.value;
+      if (k === '⌫') {
+        v = v.slice(0, -1);
+      } else if (isAmt) {
+        if (v.length < 6) v += k;
+      } else if (ij.flow === 'mobile') {
+        if (v.length < 10) v += k;
+      } else {
+        const cand = v + k;
+        if (cand.length <= 255 && /^[a-z0-9._@-]*$/.test(cand) && (k !== '@' || !v.includes('@'))) v = cand;
+      }
+      el.value = v;
+      if (isAmt) ijOnAmount(el); else ijOnInput(el);
+    }
     function ijValidInput(v) {
-      return ij.flow === 'mobile' ? /^[6-9]\d{9}$/.test(v) : /^[\w.\-]{2,}@[A-Za-z]{2,}$/.test(v);
+      return ij.flow === 'mobile' ? /^[6-9]\d{9}$/.test(v) : /^(?=[^@]*@[^@]*$)[a-zA-Z0-9][a-zA-Z0-9._@-]{0,254}$/.test(v);
     }
     function ijEntry(verifying) {
       const P = PAYEE[ij.flow];
@@ -2828,7 +2880,7 @@
       const prefix = P.prefix ? `<span class="pr-2.5 mr-0.5 border-r border-slate-200 text-sm font-bold text-slate-600">${P.prefix}</span>` : '';
       const field = verifying
         ? `<span class="font-mono text-[15px] text-slate-900 tracking-wide">${ijEsc(ij.input)}</span>`
-        : `<input id="ij-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${ij.flow === 'mobile' ? 'numeric' : 'email'}"
+        : `<input id="ij-input" type="text" ${isMobileView() ? 'readonly' : ''} onclick="ijKbOpen('payee')" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${ij.flow === 'mobile' ? 'numeric' : 'email'}"
              placeholder="${P.placeholder}" oninput="ijOnInput(this)" onkeydown="if(event.key==='Enter')ijVerify()"
              class="flex-1 min-w-0 bg-transparent outline-none font-mono text-[15px] text-slate-900 tracking-wide placeholder:text-[13px] placeholder:text-slate-400"/>`;
       ijShow(`
@@ -2853,7 +2905,8 @@
         </div>`);
       if (!verifying) {
         const i = document.getElementById('ij-input');
-        if (i) { i.value = ij.input || ''; ijOnInput(i); i.focus(); }
+        if (i) { i.value = ij.input || ''; ijOnInput(i); if (!isMobileView()) i.focus(); }
+        if (isMobileView()) ijKbOpen('payee');
       }
     }
     function ijOnInput(el) {
@@ -2947,7 +3000,7 @@
         : `<div class="text-[10px] text-emerald-700 font-bold">${P.verifiedLabel || 'Verified payee'}</div>`;
       const amount = fixedAmt
         ? `<span id="ij-amt-text">${ij.amount}</span>`
-        : `<input id="ij-amt" inputmode="numeric" maxlength="6" placeholder="0" value="${ij.amount}" oninput="ijOnAmount(this)"
+        : `<input id="ij-amt" ${isMobileView() ? 'readonly' : ''} onclick="ijKbOpen('amount')" inputmode="numeric" maxlength="6" placeholder="0" value="${ij.amount}" oninput="ijOnAmount(this)"
              class="bg-transparent outline-none font-mono font-black tracking-tight text-slate-900 placeholder:text-slate-300" style="width:${Math.max(1, ij.amount.length)}ch"/>`;
       ijShow(`
         <div class="h-full flex flex-col py-2 px-2 bg-slate-50 overflow-y-auto">
