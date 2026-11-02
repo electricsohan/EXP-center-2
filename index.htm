@@ -263,6 +263,14 @@
     .backend-box #svg-wires-group tspan[fill] { fill: #f472b6 !important; }
 
 
+      /* ===== Mobile interactive journey: fixed to the screen, no scrolling, no zoom ===== */
+    body.ij-mobile { overflow: hidden; height: 100vh; height: 100dvh; overscroll-behavior: none; touch-action: none; }
+    body.ij-mobile header.ui-header { flex-shrink: 0; }
+    body.ij-mobile #mode-journey { position: fixed; top: 3.5rem; left: 0; right: 0; bottom: 0; padding: 0; margin: 0; background: transparent; touch-action: none; }
+    body.ij-mobile #ij-fit-outer { width: 100%; height: 100%; max-width: none; }
+    body.ij-mobile #ij-container .overflow-y-auto { overflow: hidden !important; }
+    body.ij-mobile, body.ij-mobile * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+    body.ij-mobile input { -webkit-user-select: text; user-select: text; }
   </style>
 </head>
 <body class="ui-page bg-[#05070e] text-slate-100 min-h-screen flex flex-col font-sans antialiased select-none overflow-x-hidden">
@@ -1586,6 +1594,55 @@
       })();
     }
 
+    // Scripted "See How it happens" payment PIN: same 4-digit light screen as the interactive journey
+    function renderPayPinScripted(container, frame) {
+      const payee = getPayee().name;
+      const key = n => `<button id="cl-key-${n}" class="h-14 rounded-2xl bg-white text-slate-900 text-2xl font-medium shadow-sm ghost-press">${n}</button>`;
+      const dots = [0,1,2,3].map(i => `<span id="cl-dot-${i}" class="w-4 h-4 rounded-full border-2 border-slate-400"></span>`).join('');
+      container.innerHTML = `
+        <div class="absolute inset-0 bg-slate-100 z-50 flex flex-col text-slate-900">
+          <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-slate-200">
+            <div class="flex items-center gap-1">
+              <span class="text-base font-black italic text-[#1b3a82]">UPI</span>
+              <div class="flex flex-col leading-none"><span class="w-2 h-2 bg-orange-500 transform skew-x-[-15deg]"></span><span class="w-2 h-2 bg-emerald-600 transform skew-x-[-15deg] mt-0.5"></span></div>
+            </div>
+            <i data-lucide="x" class="w-5 h-5 text-slate-500"></i>
+          </div>
+          <div class="bg-white mx-3 mt-3 rounded-2xl px-4 py-3 border border-slate-200">
+            <p class="text-sm font-bold text-slate-900">Pay ₹750.00</p>
+            <p class="text-xs text-slate-500 mt-0.5">To ${payee}</p>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-center px-6">
+            <span class="text-[11px] font-bold tracking-widest text-slate-700 uppercase mb-5 text-center">ENTER 4-DIGIT UPI PIN</span>
+            <div class="flex justify-center items-center gap-5">${dots}</div>
+            <p class="text-[10px] text-slate-500 mt-3 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> Never enter your UPI PIN to receive money</p>
+          </div>
+          <div class="px-3 pb-4 pt-2">
+            <div class="grid grid-cols-3 gap-2.5">
+              ${[1,2,3,4,5,6,7,8,9].map(key).join('')}
+              <button class="h-14 rounded-2xl bg-slate-300 text-slate-800 flex items-center justify-center"><i data-lucide="delete" class="w-6 h-6"></i></button>
+              ${key(0)}
+              <button id="cl-key-check" class="h-14 rounded-2xl bg-[#12368c] text-white text-sm font-bold tracking-wider shadow-md ghost-press">PAY</button>
+            </div>
+          </div>
+        </div>`;
+      lucide.createIcons();
+      (async () => {
+        for (let i = 0; i < 4; i++) {
+          await new Promise(r => setTimeout(r, 200));
+          if (window.animFrameId !== frame) return;
+          const v = i + 1;
+          const kn = document.getElementById('cl-key-' + v);
+          if (kn) { kn.classList.add('bg-slate-300', 'scale-90'); setTimeout(() => kn.classList.remove('bg-slate-300', 'scale-90'), 150); }
+          const d = document.getElementById('cl-dot-' + i);
+          if (d) d.className = 'w-4 h-4 rounded-full bg-[#12368c] border-2 border-[#12368c]';
+        }
+        await new Promise(r => setTimeout(r, 300));
+        if (window.animFrameId !== frame) return;
+        const c = document.getElementById('cl-key-check');
+        if (c) { c.classList.add('bg-[#12285a]', 'scale-90'); setTimeout(() => c.classList.remove('bg-[#12285a]', 'scale-90'), 150); }
+      })();
+    }
     function renderPhoneScreen(state, opts) {
       opts = opts || {};
       const container = document.getElementById('phone-display-container');
@@ -1702,6 +1759,8 @@
           break;
 
         case 'cl-pin-entry':
+          renderPayPinScripted(container, currentFrame);
+          break;
         case 'cl-step-1':
         case 'cl-step-2':
         case 'cl-step-3-wait':
@@ -1870,35 +1929,11 @@
 
         case 'success-txn':
           triggerConfettiBurst();
-          container.innerHTML = `
-            <div class="h-full flex flex-col justify-between py-6 px-4 bg-white">
-              <div class="flex flex-col items-center justify-center text-center mt-10">
-                <div class="w-20 h-20 rounded-full bg-emerald-50 border-4 border-emerald-400 text-emerald-500 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/10">
-                  <i data-lucide="check" class="w-10 h-10 stroke-[4]"></i>
-                </div>
-                <h2 class="text-3xl font-black font-mono text-slate-900 tracking-tight">₹750.00</h2>
-                <span class="text-sm font-bold text-slate-800 mt-2">Payment Successful</span>
-                <p class="text-xs text-slate-500 mt-1">Paid to ${getPayee().name}</p>
-              </div>
-
-              <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-5 text-left text-[11px] font-mono space-y-4 shadow-sm mb-6">
-                <div class="flex justify-between items-center text-slate-500">
-                  <span>Switch RRN:</span>
-                  <span class="text-slate-900 font-bold">423189201948</span>
-                </div>
-                <div class="flex justify-between items-center text-slate-500">
-                  <span>Debited A/C:</span>
-                  <span class="text-slate-900 font-bold">Bank A (•••• 4821)</span>
-                </div>
-                ${getPayee().vpa ? `
-                <div class="flex justify-between items-center text-slate-500">
-                  <span>Payee VPA:</span>
-                  <span class="text-slate-900 font-bold">${getPayee().vpa}</span>
-                </div>` : ''}
-              </div>
-              <button id="sim-back-home" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 ghost-press">Done</button>
-            </div>
-          `;
+          container.innerHTML = txnSuccessHtml({
+            amount: 750, payee: getPayee().name, id: '423189201948', when: '2nd Nov 26, 08:25 pm',
+            vpa: getPayee().vpa || null, remark: null, bank: 'Bank A', last4: '4821', onHome: '', seeHow: ''
+          });
+          lucide.createIcons();
           scheduleReturnHome(currentFrame);
           break;
 
@@ -2008,9 +2043,9 @@
       if (state === 'cl-step-2') return { title: 'ENTER CARD EXPIRY (MMYY)', subHeader: 'SET PIN', slots: 4, sequence: [0,9,2,8], isMasked: false };
       if (state === 'cl-step-3-wait') return { title: 'BANK SMS OTP (AUTO-READ)', subHeader: 'SET PIN', slots: 6, sequence: [], isMasked: false };
       if (state === 'cl-step-3-receive') return { title: 'BANK SMS OTP (AUTO-READ)', subHeader: 'SET PIN', slots: 6, sequence: [], isMasked: false };
-      if (state === 'cl-step-4') return { title: 'ENTER 6-DIGIT UPI PIN', subHeader: 'SET PIN', slots: 6, sequence: [1,2,3,4,5,6], isMasked: true };
-      if (state === 'cl-step-5') return { title: 'CONFIRM 6-DIGIT UPI PIN', subHeader: 'SET PIN', slots: 6, sequence: [1,2,3,4,5,6], isMasked: true };
-      if (state === 'cl-pin-entry') return { title: 'ENTER UPI PIN', subHeader: '₹750.00', slots: 6, sequence: [1,2,3,4,5,6], isMasked: true };
+      if (state === 'cl-step-4') return { title: 'ENTER 4-DIGIT UPI PIN', subHeader: 'SET PIN', slots: 4, sequence: [1,2,3,4], isMasked: true };
+      if (state === 'cl-step-5') return { title: 'CONFIRM 4-DIGIT UPI PIN', subHeader: 'SET PIN', slots: 4, sequence: [1,2,3,4], isMasked: true };
+      if (state === 'cl-pin-entry') return { title: 'ENTER 4-DIGIT UPI PIN', subHeader: '₹750.00', slots: 4, sequence: [1,2,3,4], isMasked: true };
       return { title: 'ENTER UPI PIN', subHeader: 'AUTH', slots: 6, sequence: [1,2,3,4,5,6], isMasked: true };
     }
 
@@ -2143,30 +2178,30 @@
       return [
         { title: 'Payment initiation', subs: entrySubs.concat([
           { tag: 'App', states: ['pay-account', 'pay-proceed'], title: 'Payer selects bank account', text: 'The payer selects Bank A (•••• 4821) as the account to debit and taps Proceed to Pay.' },
-          { a: [1, 2], title: 'UPI PIN captured securely', text: 'The app hands over to an isolated Common Library screen. The PIN is encrypted with the bank\'s public key and the clear PIN is wiped from memory.' },
-          { a: [3], title: 'Payment sent to Payer PSP', text: 'The app dispatches the encrypted payment authorization to the payer\'s PSP.' },
-          { a: [4], title: 'PSP forwards to UPI Switch', text: 'The Payer PSP passes the request to the central switch with the payer VPA, payee VPA and bank code.' }
+          { a: [1, 2], title: 'UPI PIN captured securely', text: 'The app hands over to an isolated Common Library screen. The PIN is encrypted with the bank\'s public key and returned to app.' },
+          { a: [3], title: 'Payment sent to Payer PSP', text: 'The app dispatches the payment request with encrypted credentials to the payer\'s PSP.' },
+          { a: [4], title: 'PSP forwards to UPI Switch', text: 'The Payer PSP initiates ReqPay to the central switch with the payer VPA, payee VPA and bank code.' }
         ])},
         { title: 'Address Resolution', subs: [
-          { a: [5, 6], title: 'Payee address resolved', text: 'The switch asks the payee\'s PSP, using the handle after @, to validate the VPA. It replies with the beneficiary account and bank code (BIC).' }
+          { a: [5, 6], title: 'Payee address resolved', text: 'The switch sends ReqAuthDetails payee PSP to resolve the VPA. PSP replies with the beneficiary account and bank code (BIC) in RespAuthDetails.' }
         ]},
         { title: 'Debit and Authorization', subs: [
-          { a: [7], title: 'Debit request routed', text: 'The switch routes the debit request to the payer\'s bank using its bank code.' },
+          { a: [7], title: 'Debit request routed', text: 'The switch routes the ReqPayDebit request to the payer\'s bank.' },
           { a: [8, 9], title: 'PIN verified by HSM', text: 'The bank sends the encrypted PIN block to its Hardware Security Module, which checks it and returns an authorization signature.' },
-          { a: [10, 11], title: 'Payer account debited', text: 'The bank instructs its core banking system to debit ₹750.00. The CBS posts the entry, updates the balance and returns a journal reference.' },
-          { a: [12], title: 'Debit confirmed to Switch', text: 'The payer\'s bank sends the debit confirmation back to the switch.' }
+          { a: [10, 11], title: 'Payer account debited', text: 'The bank instructs its core banking system to debit the amount. The CBS posts the entry, updates the balance and returns an approval number.' },
+          { a: [12], title: 'Debit confirmed to Switch', text: 'The payer\'s bank sends the RespPayDebit confirmation back to the central switch.' }
         ]},
         { title: 'Credit', subs: [
-          { a: [13], title: 'Credit request routed', text: 'The switch forwards the credit instruction to the payee\'s bank.' },
+          { a: [13], title: 'Credit request routed', text: 'The switch forwards the ReqPayCredit instruction to the payee\'s bank.' },
           { a: [14, 15], title: 'Payee account credited', text: 'The payee bank\'s core banking system posts the credit to the payee account and confirms it.' },
-          { a: [16], title: 'Credit confirmed to Switch', text: 'The payee\'s bank sends the credit acknowledgment to the switch.' }
+          { a: [16], title: 'Credit confirmed to Switch', text: 'The payee\'s bank sends RespPayCredit to the central switch.' }
         ]},
         { title: 'Payer gets confirmation', subs: [
-          { a: [17], title: 'Switch confirms to Payer PSP', text: 'The switch delivers the final clearing confirmation to the payer\'s PSP.' },
+          { a: [17], title: 'Central switch confirms to Payer PSP', text: 'The central switch delivers RespPay to the payer\'s PSP.' },
           { a: [18], title: 'Receipt shown in the app', text: 'The Payer PSP forwards the success status to the app, which renders the payment receipt.' }
         ]},
         { title: 'Payee gets confirmations', subs: [
-          { a: [19], title: 'Payee PSP notified', text: 'The switch sends an asynchronous notification to the payee\'s PSP so the payee is told the money has arrived.' }
+          { a: [19], title: 'Payee PSP notified', text: 'The central switch sends ReqTxnConfirmation to the payee\'s PSP so the payee is told the money has arrived.' }
         ]}
       ];
     }
@@ -2675,7 +2710,7 @@
     function isMobileView() { return window.matchMedia('(max-width: 900px)').matches; }
 
     // Session store: kept until the page reloads
-    const IJ_DEMO_PIN = '111111';
+    const IJ_DEMO_PIN = '1111';
     const IJ_LIMIT = 100000;                      // UPI per-transaction limit (Rs)
     const ijStore = { bal: [145000, 500000], pin: IJ_DEMO_PIN, pinSet: false, hist: [] };   // [Bank A, Bank C]
 
@@ -2704,7 +2739,9 @@
       const hc = document.getElementById('header-controls');
       if (hc) hc.style.display = which === 'experience' ? 'flex' : 'none';
       document.getElementById('home-btn').style.display = (which === 'tiles' || isMobileView()) ? 'none' : 'block';
+      document.body.classList.toggle('ij-mobile', which === 'journey' && isMobileView());
       if (which !== 'journey') ijReset();
+      if (which === 'journey') fitJourney();
     }
     function goHome() { showOnly('tiles'); lucide.createIcons(); }
     function openJourney() { showOnly('journey'); ijReset(); ijHome(); fitJourney(); }
@@ -2717,8 +2754,18 @@
     function fitJourney() {
       const outer = document.getElementById('ij-fit-outer'), inner = document.getElementById('ij-fit');
       if (!outer || !inner) return;
+      if (document.body.classList.contains('ij-mobile')) {
+        // Fit the whole phone inside the screen, both ways, centred
+        const w = outer.clientWidth, h = outer.clientHeight;
+        const scale = Math.min(w / 370, h / 730) || 1;
+        inner.style.transform = `translateX(-50%) scale(${scale})`;
+        inner.style.top = Math.max(0, (h - 730 * scale) / 2) + 'px';
+        outer.style.height = '100%';
+        return;
+      }
       const scale = Math.min(1, outer.clientWidth / 370) || 1;
       inner.style.transform = `translateX(-50%) scale(${scale})`;
+      inner.style.top = '0px';
       outer.style.height = (730 * scale) + 'px';
     }
 
@@ -2928,6 +2975,7 @@
       let name, vpa = null, mobileShown = null;
       if (ij.flow === 'pay') {
         name = ij.input.toLowerCase() === P.input ? P.name : ij.input.split('@')[0].replace(/[._\-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        vpa = ij.input.toLowerCase() === P.input ? P.vpa : ij.input;
       } else {
         const d = ij.input === P.input;
         name = d ? P.name : 'Payee •• ' + ij.input.slice(-4);
@@ -3059,7 +3107,7 @@
     function ijProceed() {
       if (!ijPayOk()) return;
       ijKeypad({
-        title: 'ENTER UPI PIN', sub: '₹' + ij.amount + '.00', slots: 6, masked: true, baseHint: ijDemoHint(),
+        title: 'ENTER 4-DIGIT UPI PIN', pay: true, payLine1: 'Pay ₹' + ij.amount + '.00', payLine2: 'To ' + ((ij.payee && ij.payee.name) || ''), slots: 4, masked: true, baseHint: ijDemoHint(),
         done: v => { ij.pinOk = (v === ijStore.pin); ijProcessing(1500, ijFinishPay); }
       });
     }
@@ -3105,16 +3153,124 @@
     }
     function ijAcctChosen(i) {
       ij.acct = i;
-      if (ij.flow === 'balance') ijKeypad({ title: 'ENTER UPI PIN', sub: 'BALANCE', slots: 6, masked: true, baseHint: ijDemoHint(),
+      if (ij.flow === 'balance') ijKeypad({ title: 'ENTER 4-DIGIT UPI PIN', pay: true, payLine1: 'Check balance', payLine2: ijBank(), slots: 4, masked: true, baseHint: ijDemoHint(),
         done: v => { ij.pinOk = (v === ijStore.pin); ijProcessing(1500, ijBalanceScreen); } });
       else ijPinStep(1);
     }
 
     // ---- Secure keypad (Common Library) ----
+    // ---- Shared: 4-digit UPI PIN screen (light style from the device screenshot) ----
+    function ijPayPinHtml(k) {
+      const dots = Array.from({ length: k.slots }).map((_, i) => `<span id="ij-dot-${i}" class="w-4 h-4 rounded-full border-2 border-slate-400"></span>`).join('');
+      const num = n => `<button type="button" onclick="ijKey('${n}')" class="h-14 rounded-2xl bg-white text-slate-900 text-2xl font-medium shadow-sm active:bg-slate-200 active:scale-95 transition-transform">${n}</button>`;
+      return `
+        <div class="absolute inset-0 bg-slate-100 z-50 flex flex-col text-slate-900">
+          <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-slate-200">
+            <div class="flex items-center gap-1">
+              <span class="text-base font-black italic text-[#1b3a82]">UPI</span>
+              <div class="flex flex-col leading-none"><span class="w-2 h-2 bg-orange-500 transform skew-x-[-15deg]"></span><span class="w-2 h-2 bg-emerald-600 transform skew-x-[-15deg] mt-0.5"></span></div>
+            </div>
+            <button type="button" onclick="ijHome()" class="text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+          </div>
+          <div class="bg-white mx-3 mt-3 rounded-2xl px-4 py-3 border border-slate-200 flex items-center justify-between">
+            <div>
+              <p class="text-sm font-bold text-slate-900">${k.payLine1}</p>
+              <p class="text-xs text-slate-500 mt-0.5">${k.payLine2}</p>
+            </div>
+            <i data-lucide="landmark" class="w-5 h-5 text-[#12368c]"></i>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-center px-6">
+            <span class="text-[11px] font-bold tracking-widest text-slate-700 uppercase mb-5 text-center">${k.title}</span>
+            <div class="flex justify-center items-center gap-5">${dots}</div>
+            <div id="ij-hint" class="min-h-6 mt-2 flex items-center justify-center text-[9px] font-bold uppercase text-emerald-600 text-center"></div>
+            <p class="text-[10px] text-slate-500 mt-3 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> Never enter your UPI PIN to receive money</p>
+          </div>
+          <div class="px-3 pb-4 pt-2">
+            <div class="grid grid-cols-3 gap-2.5">
+              ${[1,2,3,4,5,6,7,8,9].map(num).join('')}
+              <button type="button" onclick="ijKey('del')" class="h-14 rounded-2xl bg-slate-300 text-slate-800 flex items-center justify-center active:scale-95 transition-transform"><i data-lucide="delete" class="w-6 h-6"></i></button>
+              ${num('0')}
+              <button type="button" onclick="ijKpSubmit()" class="h-14 rounded-2xl bg-[#12368c] text-white text-sm font-bold tracking-wider shadow-md active:bg-[#12285a] active:scale-95 transition-transform">PAY</button>
+            </div>
+            ${k.footMsg ? `<div class="text-center text-[10px] font-bold text-red-600 pt-2">${k.footMsg}</div>` : ''}
+          </div>
+        </div>`;
+    }
+
+    // ---- Shared: payment success screen (layout from the device screenshot) ----
+    function txnToggleDetails(btn) {
+      const wrap = btn.closest('.txn-wrap');
+      const box = wrap && wrap.querySelector('.txn-details');
+      if (!box) return;
+      const hidden = box.classList.toggle('hidden');
+      btn.querySelector('span').textContent = hidden ? 'Show details' : 'Hide details';
+      const ic = btn.querySelector('svg, i');
+      if (ic) ic.classList.toggle('rotate-180', hidden);
+    }
+    function txnSuccessHtml(o) {
+      const copyBtn = `<button type="button" onclick="navigator.clipboard && navigator.clipboard.writeText('${o.id}')" class="text-slate-400 hover:text-slate-700"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>`;
+      const step = t => `<div class="flex items-start gap-2.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i><span class="text-xs text-slate-800 leading-snug">${t}</span></div>`;
+      return `
+        <div class="h-full flex flex-col bg-white text-slate-900">
+          <div class="bg-emerald-500 text-white pt-3 pb-10 px-4 rounded-b-[2.5rem] shadow-lg shadow-emerald-500/20">
+            <button type="button" onclick="${o.onHome}" class="p-1 -ml-1"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <h2 class="text-center text-4xl font-black font-mono tracking-tight mt-2">₹${o.amount}.00</h2>
+            <p class="text-center text-xs font-bold mt-2 opacity-90">Payment Successful</p>
+          </div>
+          <div class="flex-1 overflow-y-auto px-4 -mt-6 pb-3">
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-4 shadow-sm space-y-3.5">
+              <div>
+                <p class="text-[10px] text-slate-500">Banking Name</p>
+                <p class="text-sm font-bold text-slate-900">${o.payee}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <p class="text-[10px] text-slate-500">Transaction ID</p>
+                  <p class="text-xs font-bold font-mono text-slate-900 flex items-start gap-1.5 min-w-0"><span class="min-w-0 break-all">${o.id}</span>${copyBtn}</p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-slate-500">Date &amp; Time</p>
+                  <p class="text-xs font-bold text-slate-900">${o.when}</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <p class="text-[10px] text-slate-500">To UPI ID</p>
+                  <p class="text-xs font-bold text-slate-900 break-all">${o.vpa || '—'}</p>
+                </div>
+                <div>
+                  <p class="text-[10px] text-slate-500">Remarks</p>
+                  <p class="text-xs font-bold text-slate-900">${o.remark || 'NO REMARK'}</p>
+                </div>
+              </div>
+              <div>
+                <p class="text-[10px] text-slate-500">Debited account</p>
+                <p class="text-xs font-bold text-slate-900 flex items-center gap-2 mt-0.5"><i data-lucide="landmark" class="w-4 h-4 text-[#12368c]"></i>${o.bank} (•••• ${o.last4})</p>
+              </div>
+            </div>
+            <div class="txn-wrap mt-4">
+              <p class="text-xs font-bold text-slate-900 mb-2">Process details</p>
+              <div class="txn-details bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                ${step('Payment initiated by you')}
+                ${step('Payment transferred from your account')}
+                ${step('Payment received by ' + o.payee)}
+              </div>
+              <button type="button" onclick="txnToggleDetails(this)" class="w-full mt-3 py-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-700">
+                <span>Hide details</span><i data-lucide="arrow-up" class="w-3.5 h-3.5 transition-transform"></i>
+              </button>
+            </div>
+          </div>
+          <div class="px-4 pb-5 pt-2 space-y-2">
+            ${o.seeHow || ''}
+            <button id="sim-back-home" type="button" onclick="${o.onHome}" class="w-full py-4 rounded-2xl bg-orange-500 text-white font-bold text-sm shadow-lg shadow-orange-500/20 transition-transform duration-100 active:scale-95">Home</button>
+          </div>
+        </div>`;
+    }
     function ijKeypad(cfg) {
       ij.screen = 'kp';
       ij.kp = Object.assign({ buf: '', masked: false, locked: false }, cfg);
       const k = ij.kp;
+      if (k.pay) { ijShow(ijPayPinHtml(k)); if (k.baseHint) ijHint(k.baseHint.html, k.baseHint.cls); return; }
       ijShow(`
         <div class="absolute inset-0 bg-[#0c2264] z-50 flex flex-col justify-between text-white">
           <div>
@@ -3166,6 +3322,7 @@
       const k = ij.kp; if (!k) return;
       for (let i = 0; i < k.slots; i++) {
         const d = document.getElementById('ij-dot-' + i), l = document.getElementById('ij-line-' + i), has = i < k.buf.length;
+        if (k.pay) { if (d) d.className = has ? 'w-4 h-4 rounded-full bg-[#12368c] border-2 border-[#12368c]' : 'w-4 h-4 rounded-full border-2 border-slate-400'; continue; }
         if (d) d.textContent = has ? (k.masked ? '●' : k.buf[i]) : '';
         if (l) l.className = has ? 'w-full h-1 bg-[#12368c]' : 'w-full h-0.5 bg-slate-400';
       }
@@ -3213,8 +3370,8 @@
           });
         },
         done: () => { ijBanner(false); ijPinStep(4); } });
-      if (n === 4) ijKeypad({ title: 'ENTER 6-DIGIT UPI PIN', sub: 'SET PIN', slots: 6, masked: true, footMsg: msg, done: v => { ij.newPin = v; ijPinStep(5); } });
-      if (n === 5) ijKeypad({ title: 'CONFIRM 6-DIGIT UPI PIN', sub: 'SET PIN', slots: 6, masked: true,
+      if (n === 4) ijKeypad({ title: 'ENTER 4-DIGIT UPI PIN', sub: 'SET PIN', slots: 4, masked: true, footMsg: msg, done: v => { ij.newPin = v; ijPinStep(5); } });
+      if (n === 5) ijKeypad({ title: 'CONFIRM 4-DIGIT UPI PIN', sub: 'SET PIN', slots: 4, masked: true,
         done: v => {
           if (v !== ij.newPin) return ijPinStep(4, "PIN doesn't match. Please enter a new PIN again.");
           ijStore.pin = v; ijStore.pinSet = true;      // the new PIN is now required for payments and balance checks
@@ -3246,20 +3403,11 @@
     function ijSuccessTxn() {
       ij.screen = 'done';
       const t = ij.txn;
-      ijShow(`
-        <div class="h-full flex flex-col justify-between py-5 px-4 bg-white overflow-y-auto">
-          <div class="flex flex-col items-center justify-center text-center mt-4">
-            <div class="w-20 h-20 rounded-full bg-emerald-50 border-4 border-emerald-400 text-emerald-500 flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/10"><i data-lucide="check" class="w-10 h-10 stroke-[4]"></i></div>
-            <h2 class="text-3xl font-black font-mono text-slate-900 tracking-tight">₹${t.amount}.00</h2>
-            <span class="text-sm font-bold text-slate-800 mt-2">Payment Successful</span>
-            <p class="text-xs text-slate-500 mt-1">Paid to ${ijEsc(t.payee)}</p>
-          </div>
-          <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-4 text-left text-[11px] font-mono space-y-2.5 shadow-sm my-4">${ijReceiptRows(t)}</div>
-          <div class="space-y-2">
-            ${ijSeeHowBtn()}
-            <button type="button" onclick="ijHome(true)" class="w-full py-4 rounded-3xl bg-[#0f172a] text-white font-bold text-sm transition-transform duration-100 active:scale-95">Done</button>
-          </div>
-        </div>`);
+      ijShow(txnSuccessHtml({
+        amount: t.amount, payee: ijEsc(t.payee), id: t.id, when: ijWhen(t.ts),
+        vpa: t.vpa ? ijEsc(t.vpa) : null, remark: t.note ? ijEsc(t.note) : null,
+        bank: t.bank, last4: t.last4, onHome: 'ijHome(true)', seeHow: ijSeeHowBtn()
+      }));
       ijConfetti();
     }
     function ijFailTxn() {
@@ -3346,6 +3494,13 @@
       const t = ijStore.hist[i]; if (!t) return ijHistory();
       const ok = t.status === 'success';
       ij.screen = 'txn';
+      if (ok) {
+        return ijShow(txnSuccessHtml({
+          amount: t.amount, payee: ijEsc(t.payee), id: t.id, when: ijWhen(t.ts),
+          vpa: t.vpa ? ijEsc(t.vpa) : null, remark: t.note ? ijEsc(t.note) : null,
+          bank: t.bank, last4: t.last4, onHome: 'ijHome()', seeHow: ''
+        }));
+      }
       ijShow(`
         <div class="h-full flex flex-col py-4 px-4 bg-white overflow-y-auto">
           <div class="flex items-center gap-2 mb-5">${ijBackBtn('ijBack()', '')}<h3 class="text-sm font-bold text-slate-900">Transaction details</h3></div>
@@ -3358,6 +3513,19 @@
           <div class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl p-4 text-left text-[11px] font-mono space-y-2.5 shadow-sm">${ijReceiptRows(t)}</div>
         </div>`);
     }
+
+    // ---- Mobile: block pinch-zoom and double-tap zoom anywhere on the page ----
+    ['gesturestart', 'gesturechange', 'gestureend'].forEach(ev =>
+      document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+    document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    let ijLastTouchEnd = 0;
+    document.addEventListener('touchend', e => {
+      const now = Date.now();
+      if (now - ijLastTouchEnd <= 300) e.preventDefault();
+      ijLastTouchEnd = now;
+    }, { passive: false });
+    window.addEventListener('orientationchange', () => setTimeout(fitJourney, 150));
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fitJourney);
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
