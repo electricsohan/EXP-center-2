@@ -2898,6 +2898,61 @@
       });
       c.appendChild(kb);
     }
+    // ---- On-screen keyboard for the transaction note (phones only): all characters, max 50 ----
+    let ijNoteShift = false;
+    const KB_NOTE_KEY = 'flex-1 min-w-0 h-9 rounded-md bg-white text-slate-900 font-semibold text-sm shadow-sm active:bg-slate-100';
+    function ijKbOpenNote() {
+      if (!isMobileView()) return;
+      const el = document.getElementById('ij-note');
+      if (!el || !ijC()) return;
+      ijKbClose();
+      ijNoteShift = false;
+      ijKbNoteRender(el);
+    }
+    function ijKbNoteRender(el) {
+      const c = ijC(); if (!c) return;
+      let kb = document.getElementById('ij-kb');
+      if (!kb) {
+        kb = document.createElement('div');
+        kb.id = 'ij-kb';
+        kb.className = 'absolute inset-x-0 bottom-0 z-[60] bg-slate-200 border-t border-slate-300 px-1.5 pt-2 pb-3 shadow-2xl';
+        kb.addEventListener('click', e => {
+          const b = e.target.closest('[data-k]');
+          if (b) ijKbNoteKey(b.dataset.k, el);
+        });
+        c.appendChild(kb);
+      }
+      const L = x => ijNoteShift ? x.toUpperCase() : x;
+      const row = arr => `<div class="flex gap-1 mb-1.5">${arr.map(k => `<button type="button" data-k="${k}" class="${KB_NOTE_KEY}">${k === 'space' ? 'space' : L(k)}</button>`).join('')}</div>`;
+      const letters = arr => arr.map(k => `<button type="button" data-k="${k}" class="${KB_NOTE_KEY}">${L(k)}</button>`).join('');
+      kb.innerHTML =
+        row(['1','2','3','4','5','6','7','8','9','0']) +
+        row(['q','w','e','r','t','y','u','i','o','p']) +
+        row(['a','s','d','f','g','h','j','k','l']) +
+        `<div class="flex gap-1 mb-1.5">
+           <button type="button" data-k="shift" class="flex-[1.5] h-9 rounded-md ${ijNoteShift ? 'bg-orange-500 text-white' : 'bg-slate-300 text-slate-800'} font-bold text-sm">⇧</button>
+           ${letters(['z','x','c','v','b','n','m'])}
+           <button type="button" data-k="⌫" class="flex-[1.5] h-9 rounded-md bg-slate-300 text-slate-800 font-bold text-sm">⌫</button>
+         </div>` +
+        row(['.', ',', '-', '_', '!', '?', "'", '/', '(', ')', ':', ';', '@']) +
+        `<div class="flex gap-1.5 mt-1">
+           <button type="button" data-k="space" class="flex-[3] h-9 rounded-md bg-white text-slate-900 font-semibold text-sm active:bg-slate-100">space</button>
+           <button type="button" data-k="done" class="flex-[1.2] h-9 rounded-md bg-orange-500 text-white font-bold text-sm active:scale-95">Done</button>
+         </div>`;
+    }
+    function ijKbNoteKey(k, el) {
+      if (k === 'done') return ijKbClose();
+      if (k === 'shift') { ijNoteShift = !ijNoteShift; return ijKbNoteRender(el); }
+      let v = el.value;
+      if (k === '⌫') {
+        v = v.slice(0, -1);
+      } else if (v.length < 50) {
+        v += k === 'space' ? ' ' : (ijNoteShift ? k.toUpperCase() : k);
+      }
+      el.value = v;
+      ij.note = v;
+      if (ijNoteShift && k !== 'shift' && k !== '⌫') { ijNoteShift = false; ijKbNoteRender(el); }
+    }
     function ijKbClose() {
       const kb = document.getElementById('ij-kb');
       if (kb) kb.remove();
@@ -3066,7 +3121,7 @@
               <div class="flex items-center justify-center text-4xl font-black text-slate-900 font-mono tracking-tight"><span>₹</span>${amount}</div>
               <p id="ij-amt-err" class="hidden mt-1 text-[10px] font-bold text-red-600">UPI limit per transaction is ₹1,00,000</p>
             </div>
-            <input id="ij-note" maxlength="50" placeholder="Add a note (optional)" value="${ijEsc(ij.note || '')}" oninput="ij.note=this.value"
+            <input id="ij-note" maxlength="50" ${isMobileView() ? 'readonly' : ''} onclick="ijKbOpenNote()" placeholder="Add a note (optional)" value="${ijEsc(ij.note || '')}" oninput="ij.note=this.value"
               class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-700 placeholder:text-slate-400 outline-none focus:border-orange-400"/>
             <div id="ij-acct-wrap" class="space-y-2 transition-opacity duration-300">
               <span class="text-[10px] text-slate-400 block font-bold">Paying From</span>
