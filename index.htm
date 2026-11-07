@@ -35,6 +35,14 @@
       animation: wire-dash 0.9s linear infinite;
     }
 
+    @keyframes block-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(249,115,22,.75), 0 0 26px rgba(249,115,22,.8); }
+      100% { box-shadow: 0 0 0 22px rgba(249,115,22,0), 0 0 26px rgba(249,115,22,.8); }
+    }
+    #flow-svg g[id^="block-"], #flow-svg #svg-wires-group path, #flow-svg #svg-wires-group text { transition: opacity .35s ease, transform .3s ease; }
+    #flow-svg.has-active g[id^="block-"]:not(.block-active):not(.block-end) { opacity: .5; }
+    #flow-svg.has-active #svg-wires-group path:not(.wire-active), #flow-svg.has-active #svg-wires-group text:not(:has(tspan[fill])) { opacity: .4; }
+
     /* Diagram block highlight: scale around the block's own centre */
     #flow-svg g[id^="block-"] { transform-box: fill-box; transform-origin: center; }
     #flow-svg g.block-active { transform: scale(1.06); }
@@ -71,21 +79,9 @@
     }
 
     /* Diagram in light mode: pale tinted blocks with dark text, same accent strokes */
-    #flow-svg rect, #flow-svg text { transition: fill .25s ease; }
-    #flow-svg rect[filter] { filter: none; }
-    #svg-wires-group path:not(.wire-active) { stroke: #94a3b8; }
     #arrow-neutral path { fill: #94a3b8; }
     #svg-wires-group text { fill: #64748b; stroke: #f9fafb; }
     #svg-wires-group tspan[fill] { fill: #ea580c; }
-    #block-central-switch rect { fill: #eef2ff; } #block-central-switch text { fill: #1e1b4b; }
-    #block-payer-psp rect { fill: #fff7ed; }      #block-payer-psp text { fill: #9a3412; }
-    #block-payee-psp rect { fill: #f0f9ff; }      #block-payee-psp text { fill: #075985; }
-    #block-payer-bank rect { fill: #ecfdf5; }     #block-payer-bank text { fill: #065f46; }
-    #block-payee-bank rect { fill: #faf5ff; }     #block-payee-bank text { fill: #6b21a8; }
-    #block-cl rect { fill: #eef2ff; }             #block-cl text { fill: #3730a3; }
-    #block-payer-hsm rect { fill: #f0fdfa; }      #block-payer-hsm text { fill: #0f766e; }
-    #block-payer-cbs rect { fill: #ecfdf5; }      #block-payer-cbs text { fill: #047857; }
-    #block-payee-cbs rect { fill: #faf5ff; }      #block-payee-cbs text { fill: #7e22ce; }
 
     /* Spinning Loader */
     @keyframes spinner {
@@ -94,6 +90,18 @@
     .animate-spinner {
       animation: spinner 1s linear infinite;
     }
+
+
+    /* ---- Smoothness + realistic touch ---- */
+    :root { --ease-out: cubic-bezier(.22,1,.36,1); --ease-io: cubic-bezier(.4,0,.2,1); }
+    .ghost-press { transition: transform .14s var(--ease-out), background-color .14s var(--ease-out), filter .14s var(--ease-out); }
+    #phone-display-container [class*="transition"], #phone-display-container button { transition-timing-function: var(--ease-out); }
+    #phone-display-container .screen-in, #phone-display-container .view-fade, #phone-display-container .pop-in { will-change: transform, opacity; backface-visibility: hidden; }
+    @keyframes screen-in { from { opacity:0; transform: translateY(8px);} to { opacity:1; transform:none;} }
+    .screen-in { animation: screen-in .45s var(--ease-out) both; }
+    .screen-exit { animation: screen-exit .32s var(--ease-io) forwards; }
+    .tap-dot { animation: tap-dot 1.2s ease-in-out infinite; }
+    #m-notif-banner, #sms-push-banner, #ij-sms-banner { transition: transform .55s var(--ease-out), opacity .4s var(--ease-out) !important; will-change: transform; }
 
     /* Transition helper for Ghost Presses */
     .ghost-press {
@@ -134,6 +142,16 @@
     /* Payee verified: card pops in */
     @keyframes pop-in { from { opacity:0; transform:translateY(8px) scale(0.96);} to { opacity:1; transform:translateY(0) scale(1);} }
     .pop-in { animation: pop-in 0.35s ease-out both; }
+    @keyframes screen-in { from { opacity:0; transform: translateY(10px) scale(.985);} to { opacity:1; transform:none;} }
+    .screen-in { animation: screen-in 0.42s cubic-bezier(.2,.7,.2,1) both; }
+    @keyframes switch-sheen { from { transform: translateX(-100%);} to { transform: translateX(100%);} }
+    .switch-bar::after { content:''; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); animation: switch-sheen 1.4s ease-in-out infinite; }
+    @keyframes progress-fill { from { width: 0%; } to { width: 100%; } }
+    .progress-fill { animation: progress-fill 1.4s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes tap-dot { 0% { opacity:0; transform: scale(.6);} 30% { opacity:.55; transform: scale(1);} 100% { opacity:0; transform: scale(1.25);} }
+    .tap-dot { animation: tap-dot 1.1s ease-out infinite; }
+    @keyframes app-pop { 0% { opacity:0; transform: scale(.86);} 60% { opacity:1; transform: scale(1.015);} 100% { opacity:1; transform: scale(1);} }
+    .app-pop { animation: app-pop .42s cubic-bezier(.2,.8,.2,1) both; }
 
     /* Rotating Device Animation */
     @keyframes rotate-phone {
@@ -167,19 +185,7 @@
       letter-spacing: 1px;
     }
 
-    /* 2. Glowing Neon Grid & Radial Nebula */
-    .backend-box .ui-grid-bg {
-      background-color: #02040a;
-      background-image: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
-      background-size: 100% 100%;
-      box-shadow: inset 0 0 80px rgba(0,0,0,0.8);
-    }
 
-    /* 3. SVG Participant Boxes: Dark fill with glowing colored borders */
-    #flow-svg rect {
-      fill: #0b1120 !important; /* Dark interior to match the scheme */
-      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.15));
-    }
     
     /* 4. Glowing Text */
     #flow-svg text {
@@ -217,49 +223,47 @@
 
     /* ===== Learn panel: active step covers 80% (middle) and blurs the other 20% ===== */
     /* tiles expand in place to fit their content; the active tile animates open */
+    :root { --ease-soft: cubic-bezier(.22,1,.36,1); }
+    #phone-fit { transition: transform .5s var(--ease-soft); } #phone-fit-outer { transition: height .5s var(--ease-soft); }
     .learn-expand { display: grid; grid-template-rows: 1fr; }
-    .learn-expand.is-opening { animation: learn-open .4s ease-out both; }
+    .learn-expand.is-opening { animation: learn-open .5s var(--ease-soft) both; }
     .learn-expand > .learn-expand-inner { min-height: 0; overflow: hidden; }
     @keyframes learn-open { from { grid-template-rows: 0fr; opacity: 0; } to { grid-template-rows: 1fr; opacity: 1; } }
-    .learn-tile { transition: filter .35s ease, opacity .35s ease, background-color .25s ease, border-color .25s ease; }
+    .learn-tile { position: relative; transition: filter .45s var(--ease-soft), opacity .45s var(--ease-soft), background-color .3s ease, border-color .3s ease, box-shadow .45s var(--ease-soft); }
     .learn-tile.learn-blur { filter: blur(3.5px); opacity: .5; pointer-events: none; user-select: none; }
-    .learn-tile.learn-active { position: relative; z-index: 10; transform: scale(1.015); box-shadow: 0 14px 30px -8px rgba(249,115,22,.35), 0 6px 12px -6px rgba(15,23,42,.25); }
-    .learn-tile.learn-rise { animation: learn-rise .45s cubic-bezier(.2,.8,.2,1) both; }
-    @keyframes learn-rise { from { transform: translateY(16px) scale(.96); opacity: .4; } to { transform: translateY(0) scale(1.015); opacity: 1; } }
-    .api-attr-chip { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 2px 6px; border-radius: 6px; background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+    .learn-tile.learn-blur-in { animation: learn-blur-in .45s var(--ease-soft) both; }
+    @keyframes learn-blur-in { from { filter: blur(0); opacity: 1; } to { filter: blur(3.5px); opacity: .5; } }
+    .learn-tile.learn-active { z-index: 10; transform: scale(1.015); box-shadow: 0 18px 38px -14px rgba(249,115,22,.38), 0 6px 14px -8px rgba(15,23,42,.18); }
+    .learn-tile.learn-rise { animation: learn-rise .55s var(--ease-soft) both; }
+    @keyframes learn-rise { from { transform: translateY(16px) scale(.97); opacity: .4; } to { transform: translateY(0) scale(1.015); opacity: 1; } }
+    /* step connector: a thin line through the number circles that turns green as steps complete */
+    .step-tile::before, .step-tile::after { content: ""; position: absolute; left: 25px; width: 2px; background: #e2e8f0; z-index: 0; pointer-events: none; transition: background-color .4s ease; }
+    .step-tile::before { top: -9px; height: calc(50% - 14px + 9px); }
+    .step-tile::after { top: calc(50% + 14px); height: calc(50% - 14px + 9px); }
+    .step-tile.step-active::before { height: 14px; } .step-tile.step-active::after { top: 100%; height: 9px; }
+    .step-tile:first-child::before, .step-tile:last-child::after { display: none; }
+    .step-tile.step-up-done::before, .step-tile.step-down-done::after { background: #34d399; }
+    .step-tile > div:first-child, .step-tile > .flex:first-child { position: relative; z-index: 1; }
+    .api-attr-chip { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 2px 8px; border-radius: 9999px; background: linear-gradient(180deg, #fff7ed, #ffedd5); color: #9a3412; border: 1px solid #fed7aa; }
+    .api-attr-chip.fresh { animation: chip-in .45s var(--ease-soft) both; animation-delay: calc(var(--i, 0) * 45ms + 120ms); }
+    @keyframes chip-in { from { opacity: 0; transform: translateY(5px) scale(.96); } to { opacity: 1; transform: none; } }
+    .learn-scroll { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; scroll-behavior: smooth; }
+    .learn-scroll::-webkit-scrollbar { width: 6px; } .learn-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    /* backend flow polish */
+    @keyframes flow-in { from { opacity: 0; } to { opacity: 1; } }
+    #flow-svg.flow-enter g[id^="block-"] { animation: flow-in .6s var(--ease-soft) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
+    #flow-svg.flow-enter #svg-wires-group, #flow-svg.flow-enter #flow-zones { animation: flow-in .8s var(--ease-soft) .25s backwards; }
+    @keyframes drift { from { transform: translate(-12%, -8%); } to { transform: translate(14%, 10%); } }
+    #flow-svg #svg-wires-group path.wire-hover { stroke-width: 5; filter: drop-shadow(0 0 7px #fff); opacity: 1 !important; }
+    #flow-svg #svg-wires-group text.label-hover { opacity: 1 !important; }
+    #flow-svg g[id^="block-"].block-hover { opacity: 1 !important; }
+    #flow-svg g.block-hover > foreignObject > div { box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 0 0 3px rgba(255,255,255,.35), 0 0 18px rgba(255,255,255,.35); }
+    #flow-svg g.block-end:not(.block-active) > foreignObject > div { box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 0 0 3px rgba(249,115,22,.28), 0 0 16px rgba(249,115,22,.35); border-color: #fb923c; }
 
     /* ===== Backend flow: colour scheme taken only from the reference image ===== */
     .backend-box { background: #050818 !important; }
-    .backend-box .ui-grid-bg {
-      background-color: #040716 !important;
-      background-image: radial-gradient(circle at 50% 45%, rgba(56,189,248,0.10) 0%, transparent 65%) !important;
-      background-size: 100% 100% !important;
-    }
-    .backend-box #flow-svg g[id^="block-"] rect { filter: drop-shadow(0 0 8px currentColor) !important; }
-    .backend-box #flow-svg g[id^="block-"] text { fill: #f1f5f9 !important; text-shadow: 0 0 6px rgba(255,255,255,.35) !important; }
-    .backend-box #block-payer-app rect        { fill: #1a0d02 !important; stroke: #ff9f1c !important; color: #ff9f1c; }
-    .backend-box #block-payer-app text        { fill: #ffe2b8 !important; }
-    .backend-box #block-cl rect               { fill: #0a1a4f !important; stroke: #3b6cff !important; color: #3b6cff; }
-    .backend-box #block-cl text               { fill: #bfdbfe !important; }
-    .backend-box #block-payer-psp rect        { fill: #2a1205 !important; stroke: #ff8a1f !important; color: #ff8a1f; }
-    .backend-box #block-payer-psp text        { fill: #ffd1a3 !important; }
-    .backend-box #block-central-switch rect   { fill: #2a0c08 !important; stroke: #ff5a1f !important; color: #ff5a1f; }
-    .backend-box #block-central-switch text   { fill: #ffe4d6 !important; }
-    .backend-box #block-payer-bank rect       { fill: #03241a !important; stroke: #3dff9a !important; color: #3dff9a; }
-    .backend-box #block-payer-bank text       { fill: #bbf7d0 !important; }
-    .backend-box #block-payer-hsm rect        { fill: #03201f !important; stroke: #2dd4bf !important; color: #2dd4bf; }
-    .backend-box #block-payer-hsm text        { fill: #99f6e4 !important; }
-    .backend-box #block-payer-cbs rect        { fill: #03241a !important; stroke: #22c55e !important; color: #22c55e; }
-    .backend-box #block-payer-cbs text        { fill: #bbf7d0 !important; }
-    .backend-box #block-payee-psp rect        { fill: #04202e !important; stroke: #22d3ee !important; color: #22d3ee; }
-    .backend-box #block-payee-psp text        { fill: #a5f3fc !important; }
-    .backend-box #block-payee-bank rect       { fill: #230a33 !important; stroke: #c86bff !important; color: #c86bff; }
-    .backend-box #block-payee-bank text       { fill: #f0abfc !important; }
-    .backend-box #block-payee-cbs rect        { fill: #2a0a2e !important; stroke: #e879f9 !important; color: #e879f9; }
-    .backend-box #block-payee-cbs text        { fill: #f5d0fe !important; }
-    .backend-box #svg-wires-group path:not(.wire-active) { stroke: #22d3ee !important; }
     .backend-box #arrow-neutral path { fill: #22d3ee !important; }
-    .backend-box #svg-wires-group text { fill: #a5f3fc !important; stroke: #050818 !important; }
+    .backend-box #svg-wires-group text { fill: #a5f3fc !important; stroke: #0b1a33 !important; stroke-width: 11px !important; stroke-linejoin: round; paint-order: stroke; }
     .backend-box #svg-wires-group tspan[fill] { fill: #f472b6 !important; }
 
 
@@ -280,6 +284,10 @@
   <!-- ========================================================================= -->
   <header class="ui-header h-14 bg-[#0a0f1d] border-b border-slate-800 px-4 sm:px-6 flex items-center justify-between shrink-0 z-30">
     <div class="flex items-center gap-3">
+      <!-- UPI logo (white chip keeps it legible in dark mode) -->
+      <div class="h-11 px-3 rounded-lg bg-white border border-slate-200/80 flex items-center justify-center shadow-md shrink-0">
+        <img data-upi-logo alt="UPI" class="h-6 w-auto block" draggable="false" />
+      </div>
       <!-- NPCI logo (white chip keeps it legible in dark mode) -->
       <div class="h-11 px-3 rounded-lg bg-white border border-slate-200/80 flex items-center justify-center shadow-md shrink-0">
         <img src="data:image/png;base64,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" alt="NPCI International" class="h-8 w-auto block" draggable="false" />
@@ -305,6 +313,8 @@
           <option value="pay" selected class="bg-[#0a0f1d]">Pay to VPA Flow</option>
           <option value="mobile" class="bg-[#0a0f1d]">Pay to Mobile Number Flow</option>
           <option value="qr" class="bg-[#0a0f1d]">QR Payment Flow</option>
+          <option value="intent" class="bg-[#0a0f1d]">UPI Intent Flow</option>
+          <option value="collect" class="bg-[#0a0f1d]">Collect Request Flow</option>
           <option value="pin" class="bg-[#0a0f1d]">Pin Set Flow</option>
           <option value="balance" class="bg-[#0a0f1d]">Check Balance Flow</option>
         </select>
@@ -407,6 +417,7 @@
 
           <!-- Controls: Prev, Next, Auto Simulate -->
           <div class="flex items-center gap-2 shrink-0">
+            <button id="btn-speed" type="button" onclick="cycleSpeed()" title="Playback speed" class="ui-btn-nav px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold tabular-nums transition">1×</button>
             <button onclick="stepSimulation(-1)" id="btn-prev-step" class="ui-btn-nav px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1 transition disabled:opacity-30 disabled:pointer-events-none">
               <i data-lucide="chevron-left" class="w-4 h-4"></i>
               <span>Prev</span>
@@ -495,15 +506,16 @@
     <!-- RIGHT PANE: SVG ARCHITECTURAL DIAGRAM                                   -->
     <!-- ======================================================================= -->
     <section id="sec-learn" class="flex flex-col min-h-0">
-      <div class="learn-box flex-1 flex flex-col min-h-[420px] rounded-2xl overflow-hidden border border-gray-300 bg-gray-50 shadow-xl">
-        <div class="bg-gray-300 text-gray-800 px-4 py-2 text-sm font-bold border-b border-gray-400/50 shrink-0">Activity Center</div>
+      <div class="learn-box flex-1 flex flex-col min-h-[420px] rounded-2xl overflow-hidden border border-slate-200 bg-gradient-to-b from-white to-slate-50 shadow-[0_24px_50px_-24px_rgba(15,23,42,.35)]">
+        <div class="bg-white/90 text-slate-700 px-4 py-2.5 text-sm font-semibold tracking-wide shrink-0">Activity Center</div>
+        <div class="h-[2px] shrink-0 bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
         <div class="relative flex-1 min-h-0">
-          <div id="learn-body" class="absolute inset-0 overflow-y-auto p-3">
+          <div id="learn-body" class="learn-scroll absolute inset-0 overflow-y-auto p-3">
             <div id="learn-list" class="relative h-full"></div>
             <div id="learn-wip" class="hidden rounded-xl border border-amber-300 bg-amber-50 p-4 text-center">
               <div class="inline-flex items-center gap-2 text-amber-800 font-bold text-sm">
                 <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
-                Work in Progress
+                <span id="learn-wip-text">Work in Progress</span>
               </div>
               <p class="text-[11px] text-amber-700 mt-1 leading-snug">The step-by-step explanation for this flow is coming soon.</p>
             </div>
@@ -516,10 +528,12 @@
       
       <!-- Flow Diagram Card (fills the whole right pane) -->
       <div class="backend-box flex-1 min-h-[560px] xl:min-h-0 flex flex-col rounded-2xl border border-gray-300 bg-gray-50 overflow-hidden shadow-xl">
-        <div class="bg-gray-300 text-gray-800 px-4 py-2 text-sm font-bold border-b border-gray-400/50 shrink-0">Backend Flow</div>
-        <div class="flex-1 min-h-0 flex flex-col p-3 sm:p-5 relative ui-grid-bg">
+        <div class="flex items-center justify-between gap-3 shrink-0"><div class="bg-gray-300 text-gray-800 px-4 py-2 text-sm font-bold border-b border-gray-400/50 grow-0 shrink-0">Backend Flow</div><div id="flow-pills" class="relative flex items-center gap-1 overflow-x-auto px-3 py-1 max-w-full"></div></div>
+        <div class="h-[2px] shrink-0 bg-gradient-to-r from-transparent via-sky-400 to-transparent"></div>
+        <div class="flex-1 min-h-0 flex flex-col p-3 sm:p-5 relative bg-[#040716] bg-[radial-gradient(circle_at_50%_45%,rgba(56,189,248,0.10),transparent_65%)] shadow-[inset_0_0_80px_rgba(0,0,0,0.8)]">
 
         <!-- SVG Topology Canvas (viewBox is set per flow in setBackendTab) -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden"><div class="absolute left-1/4 top-1/4 w-[55%] h-[55%] rounded-full bg-sky-400/10 blur-3xl animate-[drift_16s_ease-in-out_infinite_alternate]"></div><div class="absolute right-0 bottom-0 w-[40%] h-[40%] rounded-full bg-fuchsia-500/[.07] blur-3xl animate-[drift_20s_ease-in-out_infinite_alternate-reverse]"></div></div>
         <div class="flex-1 relative min-h-0 flex items-center justify-center overflow-hidden">
           <svg id="flow-svg" class="w-full h-full" viewBox="0 30 1040 580" preserveAspectRatio="xMidYMid meet">
             <defs>
@@ -529,55 +543,67 @@
               <marker id="arrow-active" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M 0 1 L 10 5 L 0 9 z" fill="#f97316" />
               </marker>
-              <filter id="glow-orange" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#f97316" flood-opacity="0.6"/></filter>
-              <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#10b981" flood-opacity="0.6"/></filter>
-              <filter id="glow-sky" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#0284c7" flood-opacity="0.6"/></filter>
-              <filter id="glow-purple" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#8b5cf6" flood-opacity="0.6"/></filter>
             </defs>
 
+            <g id="flow-zones">
+              <rect class="fill-[#3dff9a]/[.04] stroke-[#3dff9a]/20 [stroke-dasharray:3_7]" x="15" y="42" width="1010" height="116" rx="28" stroke-width="1.5" />
+              <rect class="fill-[#ff8a1f]/[.05] stroke-[#ff8a1f]/20 [stroke-dasharray:3_7]" x="15" y="258" width="1010" height="124" rx="28" stroke-width="1.5" />
+              <rect class="fill-[#c86bff]/[.04] stroke-[#c86bff]/20 [stroke-dasharray:3_7]" x="15" y="484" width="1010" height="112" rx="28" stroke-width="1.5" />
+            </g>
             <!-- Dynamic SVG Wires Group -->
             <g id="svg-wires-group"></g>
+            <g id="svg-particles"></g>
 
             <!-- ================= ENTITY BLOCKS ================= -->
-            <g id="block-central-switch" class="transition-all duration-300">
-              <rect x="575" y="275" width="170" height="90" rx="22" fill="#1e1b4b" stroke="#f97316" stroke-width="4" data-stroke="#f97316" data-sw="4" filter="url(#glow-orange)" />
-              <text x="660" y="326" fill="#ffffff" font-size="17" font-family="sans-serif" font-weight="900" text-anchor="middle" letter-spacing="0.5">Central Switch</text>
+            <g id="block-central-switch" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="575" y="275" width="170" height="90">
+                <div class="font-sans [--c:#ff5a1f] [--f:#2a0c08] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-lg rounded-[22px] border-2 border-[#ff5a1f] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#ffe4d6] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="network" class="w-6 h-6 shrink-0 opacity-90"></i><span>Central Switch</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payer-psp" class="transition-all duration-300">
-              <rect x="305" y="280" width="140" height="80" rx="18" fill="#431407" stroke="#fb923c" stroke-width="3.5" data-stroke="#fb923c" data-sw="3.5" filter="url(#glow-orange)" />
-              <text x="375" y="326" fill="#fed7aa" font-size="16" font-family="sans-serif" font-weight="900" text-anchor="middle">Payer PSP</text>
+            <g id="block-payer-psp" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="300" y="280" width="150" height="80">
+                <div class="font-sans [--c:#ff8a1f] [--f:#2a1205] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-base rounded-[18px] border-2 border-[#ff8a1f] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#ffd1a3] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="server" class="w-5 h-5 shrink-0 opacity-90"></i><span>Payer PSP</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payee-psp" class="transition-all duration-300">
-              <rect x="865" y="280" width="140" height="80" rx="18" fill="#082f49" stroke="#38bdf8" stroke-width="3.5" data-stroke="#38bdf8" data-sw="3.5" filter="url(#glow-sky)" />
-              <text x="935" y="326" fill="#bae6fd" font-size="16" font-family="sans-serif" font-weight="900" text-anchor="middle">Payee PSP</text>
+            <g id="block-payee-psp" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="860" y="280" width="150" height="80">
+                <div class="font-sans [--c:#22d3ee] [--f:#04202e] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-base rounded-[18px] border-2 border-[#22d3ee] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#a5f3fc] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="server" class="w-5 h-5 shrink-0 opacity-90"></i><span>Payee PSP</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payer-bank" class="transition-all duration-300">
-              <rect x="585" y="60" width="150" height="80" rx="18" fill="#064e3b" stroke="#34d399" stroke-width="3.5" data-stroke="#34d399" data-sw="3.5" filter="url(#glow-emerald)" />
-              <text x="660" y="106" fill="#a7f3d0" font-size="16" font-family="sans-serif" font-weight="900" text-anchor="middle">Payer's Bank</text>
+            <g id="block-payer-bank" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="585" y="60" width="150" height="80">
+                <div class="font-sans [--c:#3dff9a] [--f:#03241a] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-base rounded-[18px] border-2 border-[#3dff9a] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#bbf7d0] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="landmark" class="w-5 h-5 shrink-0 opacity-90"></i><span>Payer's Bank</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payee-bank" class="transition-all duration-300">
-              <rect x="585" y="500" width="150" height="80" rx="18" fill="#3b0764" stroke="#c084fc" stroke-width="3.5" data-stroke="#c084fc" data-sw="3.5" filter="url(#glow-purple)" />
-              <text x="660" y="546" fill="#e9d5ff" font-size="16" font-family="sans-serif" font-weight="900" text-anchor="middle">Payee's Bank</text>
+            <g id="block-payee-bank" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="585" y="500" width="150" height="80">
+                <div class="font-sans [--c:#c86bff] [--f:#230a33] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-base rounded-[18px] border-2 border-[#c86bff] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#f0abfc] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="landmark" class="w-5 h-5 shrink-0 opacity-90"></i><span>Payee's Bank</span></div>
+              </foreignObject>
             </g>
-            <g id="block-cl" class="transition-all duration-300">
-              <rect x="35" y="65" width="140" height="70" rx="14" fill="#0c2264" stroke="#6366f1" stroke-width="2.5" data-stroke="#6366f1" data-sw="2.5" />
-              <text x="105" y="105" fill="#e0e7ff" font-size="14" font-family="sans-serif" font-weight="900" text-anchor="middle">Common Library</text>
+            <g id="block-cl" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="35" y="65" width="140" height="70">
+                <div class="font-sans [--c:#3b6cff] [--f:#0a1a4f] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-sm rounded-[14px] border-2 border-[#3b6cff] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#bfdbfe] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="library" class="w-4 h-4 shrink-0 opacity-90"></i><span>Common Library</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payer-app" class="transition-all duration-300">
-              <rect x="35" y="285" width="140" height="70" rx="14" fill="#ffffff" stroke="#f97316" stroke-width="3" data-stroke="#f97316" data-sw="3" />
-              <text x="105" y="325" fill="#0f172a" font-size="16" font-family="sans-serif" font-weight="900" text-anchor="middle">Payer APP</text>
+            <g id="block-payer-app" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="35" y="285" width="140" height="70">
+                <div class="font-sans [--c:#ff9f1c] [--f:#1a0d02] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-sm rounded-[14px] border-2 border-[#ff9f1c] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#ffe2b8] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="smartphone" class="w-4 h-4 shrink-0 opacity-90"></i><span>Payer APP</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payer-hsm" class="transition-all duration-300">
-              <rect x="300" y="65" width="150" height="70" rx="14" fill="#0f172a" stroke="#14b8a6" stroke-width="2.5" data-stroke="#14b8a6" data-sw="2.5" />
-              <text x="375" y="105" fill="#5eead4" font-size="14" font-family="sans-serif" font-weight="900" text-anchor="middle">Payer Bank's HSM</text>
+            <g id="block-payer-hsm" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="300" y="65" width="150" height="70">
+                <div class="font-sans [--c:#2dd4bf] [--f:#03201f] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-sm rounded-[14px] border-2 border-[#2dd4bf] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#99f6e4] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="shield-check" class="w-4 h-4 shrink-0 opacity-90"></i><span>Payer Bank's HSM</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payer-cbs" class="transition-all duration-300">
-              <rect x="860" y="65" width="150" height="70" rx="14" fill="#022c22" stroke="#10b981" stroke-width="2.5" data-stroke="#10b981" data-sw="2.5" />
-              <text x="935" y="105" fill="#6ee7b7" font-size="14" font-family="sans-serif" font-weight="900" text-anchor="middle">Payer Bank's CBS</text>
+            <g id="block-payer-cbs" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="860" y="65" width="150" height="70">
+                <div class="font-sans [--c:#22c55e] [--f:#03241a] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-sm rounded-[14px] border-2 border-[#22c55e] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#bbf7d0] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="database" class="w-4 h-4 shrink-0 opacity-90"></i><span>Payer Bank's CBS</span></div>
+              </foreignObject>
             </g>
-            <g id="block-payee-cbs" class="transition-all duration-300">
-              <rect x="860" y="505" width="150" height="70" rx="14" fill="#2e1065" stroke="#a855f7" stroke-width="2.5" data-stroke="#a855f7" data-sw="2.5" />
-              <text x="935" y="545" fill="#d8b4fe" font-size="14" font-family="sans-serif" font-weight="900" text-anchor="middle">Payee Bank's CBS</text>
+            <g id="block-payee-cbs" class="group transition-all duration-300">
+              <foreignObject class="overflow-visible" x="860" y="505" width="150" height="70">
+                <div class="font-sans [--c:#e879f9] [--f:#2a0a2e] w-full h-full box-border flex flex-col items-center justify-center gap-1 px-2 text-center font-black leading-tight text-sm rounded-[14px] border-2 border-[#e879f9] [background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0)_50%),var(--f)] text-[#f5d0fe] shadow-[inset_0_1px_0_rgba(255,255,255,.3),0_8px_16px_rgba(0,0,0,.55),0_0_12px_var(--c)] transition-all duration-300 group-[.block-active]:border-[#f97316] group-[.block-active]:ring-4 group-[.block-active]:ring-[#f97316]/30 group-[.block-active]:shadow-[0_0_26px_rgba(249,115,22,.8)] group-[.block-active]:animate-[block-pulse_.9s_ease-out_1]"><i data-lucide="database" class="w-4 h-4 shrink-0 opacity-90"></i><span>Payee Bank's CBS</span></div>
+              </foreignObject>
             </g>
           </svg>
         </div>
@@ -657,6 +683,13 @@
       });
       fitPhone();
       setTimeout(fitPhone, 60);
+      // the flow pills take over in the flow view, so the dropdown fades out (kept in place: no layout shift)
+      const fs = document.getElementById('flow-select');
+      [fs && fs.parentElement, document.querySelector('label[for="flow-select"]')].forEach(el => {
+        if (!el) return;
+        el.classList.add('transition-opacity', 'duration-300');
+        el.classList.toggle('opacity-0', view !== 'journey'); el.classList.toggle('pointer-events-none', view !== 'journey');
+      });
     }
     let isAutoSimulating = false;
 
@@ -865,6 +898,8 @@
       name: 'Merchant ABC', vpa: null, mobileShown: null, amount: '750',
       amountLabel: 'Amount (pre-filled from QR)', verifiedLabel: 'Verified merchant', handle: '@bankB'
     };
+    PAYEE.intent = Object.assign({}, PAYEE.qr);
+    PAYEE.collect = Object.assign({}, PAYEE.qr);
     const DEBIT_ACCOUNTS = [
       { letter: 'A', bank: 'Bank A', sub: 'Savings •••• 4821' },
       { letter: 'C', bank: 'Bank C', sub: 'Current •••• 7733' }
@@ -872,7 +907,8 @@
 
 
     // ---- Scenarios for the pay flows (Pay VPA, Pay Mobile, QR): Success / Fail / Deemed ----------
-    const PAY_FLOWS = ['pay', 'mobile', 'qr'];
+    const PAY_FLOWS = ['pay', 'mobile', 'qr', 'intent', 'collect'];
+    const MERCHANT_FLOWS = ['intent', 'collect'];
     const FAIL_INFO = {
       funds: { label: 'Insufficient funds', code: 'Z9', reason: 'Insufficient funds in Bank A (•••• 4821)' },
       pin:   { label: 'Incorrect UPI PIN',  code: 'ZM', reason: 'Incorrect UPI PIN entered' }
@@ -987,10 +1023,111 @@
         }
       ];
 
+      const intentUi = [
+        {
+          title: 'Payer Adds Item to Cart',
+          desc: 'The payer opens the SwiftStore merchant app and taps <b>Add to Cart</b> on the product.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-home'
+        },
+        {
+          title: 'Payer Taps Checkout',
+          desc: 'The cart shows the item and the total of <b>₹750.00</b>. The payer taps <b>Checkout</b>.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-cart'
+        },
+        {
+          title: 'Payer Taps DemoPay',
+          desc: 'The payment options list shows the UPI apps. The payer taps the <b>DemoPay</b> icon.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-checkout'
+        },
+        {
+          title: 'Intent Hand-off to DemoPay',
+          desc: 'The merchant app passes the payment request (payee, amount, order reference) to DemoPay through a UPI intent. DemoPay opens.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-handoff'
+        },
+        {
+          title: 'DemoPay Pre-fills Merchant & Amount',
+          desc: `The payment request is decoded: merchant name <b>${P.name}</b> is returned with the amount <b>₹750.00</b> pre-filled.`,
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'qr-details'
+        },
+        {
+          title: 'Payer Selects Debit Account',
+          desc: 'Payer selects <b>Bank A (•••• 4821)</b> as the account to debit.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'pay-account'
+        },
+        {
+          title: 'Payer Taps Proceed to Pay',
+          desc: 'Payer reviews the details and taps <b>Proceed to Pay</b> to start the transaction.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'pay-proceed'
+        }
+      ];
+
+      const collectUi = [
+        {
+          title: 'Payer Adds Item to Cart',
+          desc: 'The payer opens the SwiftStore merchant app and taps <b>Add to Cart</b> on the product.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-home'
+        },
+        {
+          title: 'Payer Taps Checkout',
+          desc: 'The cart shows the item and the total of <b>₹750.00</b>. The payer taps <b>Checkout</b>.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-cart'
+        },
+        {
+          title: 'Checkout Page Opens',
+          desc: 'The checkout shows the UPI payment options and the amount of <b>₹750.00</b>.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-checkout'
+        },
+        {
+          title: 'Payer Enters UPI ID',
+          desc: 'Payer types <code>sohan@mypsp</code> in the Enter UPI ID field under UPI.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-upi-entry'
+        },
+        {
+          title: 'Payer Taps Verify [Processing]',
+          desc: 'Payer taps <b>Verify</b>. A processing animation runs while the UPI ID is validated.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-verifying'
+        },
+        {
+          title: 'UPI ID Verified: Payer Name Returned',
+          desc: 'Verification succeeds and the payer name <b>Sohan B</b> is returned with a verified tick.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-verified'
+        },
+        {
+          title: 'Payer Taps Continue',
+          desc: 'Payer taps <b>Continue</b> to send a collect request of <b>₹750.00</b> to <code>sohan@mypsp</code>.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-raise'
+        },
+        {
+          title: 'Collect Request Sent',
+          desc: 'The merchant app shows that the collect request is waiting for approval on <code>sohan@mypsp</code>.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'm-collect-sent'
+        },
+        {
+          title: 'Collect Notification Arrives on DemoPay',
+          desc: 'DemoPay receives the collect request and shows a notification. Tapping it opens the request.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'collect-notif'
+        },
+        {
+          title: 'DemoPay Pre-fills Merchant & Amount',
+          desc: `The collect request opens in DemoPay: merchant name <b>${P.name}</b> with the amount <b>₹750.00</b> pre-filled.`,
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'qr-details'
+        },
+        {
+          title: 'Payer Selects Debit Account',
+          desc: 'Payer selects <b>Bank A (•••• 4821)</b> as the account to debit.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'pay-account'
+        },
+        {
+          title: 'Payer Taps Proceed to Pay',
+          desc: 'Payer reviews the details and taps <b>Proceed to Pay</b>. DemoPay then asks for the UPI PIN.',
+          activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'pay-proceed'
+        }
+      ];
+
       const core = PAY_CORE_STEPS.map(st => {
         const c = Object.assign({}, st);
         c.desc = c.desc.replace('@bankB', P.handle);
-        if (kind !== 'qr') {
+        if (kind !== 'qr' && !MERCHANT_FLOWS.includes(kind)) {
           c.title = c.title.replace('merchant', 'payee');
           c.desc = c.desc.replace('merchant account', 'payee account');
         }
@@ -1000,7 +1137,17 @@
         return c;
       });
 
-      return (kind === 'qr' ? qrUi : ui).concat(applyScenario(core, sc)).map((st, i) => Object.assign({}, st, { stepNum: i + 1 }));
+      const head = kind === 'intent' ? intentUi : kind === 'collect' ? collectUi : kind === 'qr' ? qrUi : ui;
+      let tail = applyScenario(core, sc);
+      if (MERCHANT_FLOWS.includes(kind)) {
+        tail = tail.map(s => isFinalState(s.phoneState) ? Object.assign({}, s, { phoneState: 'merchant-result-arrow' }) : s)
+          .concat([{
+            title: 'Payer Returns to the Merchant App',
+            desc: 'Payer taps the back arrow at the top-left of DemoPay. The phone returns to SwiftStore, which shows the payment result.',
+            activeBlocks: ['block-payer-app'], activeWires: [], phoneState: 'merchant-return'
+          }]);
+      }
+      return head.concat(tail).map((st, i) => Object.assign({}, st, { stepNum: i + 1 }));
     }
 
     const PAY_FLOW_STEPS = buildPayFlowSteps('pay');
@@ -1316,6 +1463,7 @@
     // =========================================================================
     // End-of-flow: ghost-tap Done / Back to Homepage, slide the screen out, slide Home in
     function scheduleReturnHome(frame) {
+      if (MERCHANT_FLOWS.includes(currentFlowType)) { attachMerchantExit(frame); return; }
       setTimeout(() => {
         if (window.animFrameId !== frame) return;
         const btn = document.getElementById('sim-back-home');
@@ -1337,13 +1485,15 @@
 
     // ---- Pay flows: shared helpers -------------------------------------------------
     function getPayee() { return PAYEE[currentFlowType] || PAYEE.pay; }
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    window.simSpeed = 1;
+    const sleep = ms => new Promise(r => setTimeout(r, ms / window.simSpeed));
     const frameLive = f => window.animFrameId === f;
 
     function pressButton(el, pressedClasses) {
       if (!el) return;
-      el.classList.add('scale-95', ...pressedClasses);
-      setTimeout(() => el.classList.remove('scale-95', ...pressedClasses), 200);
+      const cls = ['scale-[0.97]', 'brightness-95', ...pressedClasses];
+      el.classList.add(...cls);
+      setTimeout(() => el.classList.remove(...cls), 200);
     }
 
     function payHeaderHtml(P) {
@@ -1643,6 +1793,430 @@
         if (c) { c.classList.add('bg-[#12285a]', 'scale-90'); setTimeout(() => c.classList.remove('bg-[#12285a]', 'scale-90'), 150); }
       })();
     }
+    const UPI_LOGO_SRC = 'data:image/png;base64,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';
+    document.querySelectorAll('img[data-upi-logo]').forEach(i => i.src = UPI_LOGO_SRC);
+
+    // ---- Merchant app (SwiftStore) + UPI intent / collect journeys ------------------------
+    // Each merchant screen is one step: at most one tap (animated once, on entry) and no
+    // automatic follow-up. The next screen only appears when the user presses Next.
+    const COLLECT_PAYER = { name: 'Sohan B', vpa: 'sohan@mypsp' };
+    const MERCH_ITEM = { name: 'Canvas Tote Bag', price: '750.00' };
+
+    function press(id, classes) {
+      const el = document.getElementById(id);
+      if (el) pressButton(el, classes);
+    }
+
+    // Shows where the payer has to tap before the tap happens
+    function tapHint(id) { /* touch is shown by the key press itself */ }
+
+    const merchantAppTile = (id, letters, label, cls, extra) => `
+      <button${id ? ` id="${id}"` : ''} class="flex flex-col items-center gap-1 p-1 rounded-2xl transition-transform duration-100 ${extra || ''}">
+        <span class="w-11 h-11 rounded-full ${cls} flex items-center justify-center text-[11px] font-black">${letters}</span>
+        <span class="text-[9px] font-bold text-slate-700">${label}</span>
+      </button>`;
+
+    function merchantShell(body, bottom, overlay) {
+      return `
+        <div class="h-full flex flex-col bg-white relative overflow-hidden screen-in">
+          <div class="px-4 py-3 flex items-center justify-between border-b border-slate-100 shrink-0">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-indigo-600"></i>
+              <span class="text-sm font-black text-slate-900">SwiftStore</span>
+            </div>
+            <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-700"></i>
+          </div>
+          <div class="flex-1 min-h-0 px-4 py-4 flex flex-col">${body}</div>
+          ${bottom || ''}
+          ${overlay || ''}
+        </div>`;
+    }
+
+    function merchantProductCard(inCart) {
+      return `
+        <div class="flex gap-3 items-center p-3 rounded-2xl border ${inCart ? 'border-indigo-300 bg-indigo-50/40' : 'border-slate-200'}">
+          <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-300 flex items-center justify-center"><i data-lucide="shopping-bag" class="w-7 h-7 text-indigo-700"></i></div>
+          <div class="flex-1">
+            <div class="text-xs font-bold text-slate-900">${MERCH_ITEM.name}</div>
+            <div class="text-[11px] text-indigo-600 font-bold mt-1">₹${MERCH_ITEM.price}</div>
+            ${inCart ? '<div class="text-[10px] font-bold text-emerald-700 mt-1">Added to cart</div>' : ''}
+          </div>
+        </div>`;
+    }
+
+    function merchantCheckoutBody(dim) {
+      const isCollect = currentFlowType === 'collect';
+      return `
+        <div class="${dim ? 'opacity-40' : ''} transition-opacity">
+          <div class="text-sm font-black text-slate-900 mb-3">Checkout</div>
+          <div class="flex justify-between text-xs text-slate-600"><span>${MERCH_ITEM.name} × 1</span><span>₹${MERCH_ITEM.price}</span></div>
+          <div class="flex justify-between text-xs text-slate-600 mt-2"><span>Tax (18% GST, incl.)</span><span>incl.</span></div>
+          <div class="flex justify-between text-sm font-black text-slate-900 mt-3 pt-3 border-t border-slate-200"><span>Total</span><span class="text-indigo-600">₹${MERCH_ITEM.price}</span></div>
+          <div class="mt-5 text-[10px] font-bold uppercase text-slate-400 tracking-wider">Payment method</div>
+          <div class="mt-2 p-3 rounded-2xl border-2 border-indigo-500 bg-indigo-50 text-xs font-bold text-indigo-900">${isCollect ? 'UPI ID' : 'UPI App'}</div>
+        </div>`;
+    }
+
+    // ---- Checkout page (layout from the reference screen) ------------------------------------
+    // Generated app names and logos (not real brands)
+    const UPI_APPS = [
+      { id: 'm-app-demopay', name: 'DemoPay', shape: 'circle', color: '#f97316', letter: 'D', demo: true },
+      { id: null, name: 'Kiwi Pay', shape: 'circle', color: '#16a34a', letter: 'K' },
+      { id: null, name: 'Zippy', shape: 'square', color: '#7c3aed', letter: 'Z' },
+      { id: null, name: 'Arka UPI', shape: 'diamond', color: '#0d9488', letter: 'A' },
+      { id: null, name: 'Nova', shape: 'hex', color: '#2563eb', letter: 'N' },
+      { id: null, name: 'Tejas', shape: 'square', color: '#dc2626', letter: 'T' },
+      { id: null, name: 'Bolt', shape: 'circle', color: '#ca8a04', letter: 'B' },
+      { id: null, name: 'Sahara Pay', shape: 'diamond', color: '#db2777', letter: 'S' }
+    ];
+    const APP_SHAPES = {
+      circle: '<circle cx="20" cy="20" r="18"/>',
+      square: '<rect x="3" y="3" width="34" height="34" rx="9"/>',
+      diamond: '<polygon points="20,2 38,20 20,38 2,20"/>',
+      hex: '<polygon points="20,2 36,11 36,29 20,38 4,29 4,11"/>'
+    };
+    function appLogo(a, size) {
+      return `<svg width="${size}" height="${size}" viewBox="0 0 40 40" class="shrink-0" fill="${a.color}">${APP_SHAPES[a.shape]}<text x="20" y="26" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="700" font-family="Arial, sans-serif">${a.letter}</text></svg>`;
+    }
+
+    const appTile = (a, extra) => `
+      <button${a.id ? ` id="${a.id}"` : ''} class="flex flex-col items-center gap-1 p-1 rounded-2xl transition-transform duration-100 ${extra || ''}">
+        ${appLogo(a, 40)}
+        <span class="text-[9px] font-bold text-slate-700 truncate max-w-full">${a.name}</span>
+      </button>`;
+
+    function appPickerSheet() {
+      return `
+        <div class="absolute inset-x-0 bottom-0 z-[40] bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-4 pop-in">
+          <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-3"></div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-black text-slate-900">Pay with</span>
+            <img src="${UPI_LOGO_SRC}" alt="UPI" class="h-4 w-auto" draggable="false">
+          </div>
+          <div class="grid grid-cols-4 gap-x-2 gap-y-3">
+            ${UPI_APPS.map(a => appTile(a, a.demo ? 'bg-orange-50 ring-2 ring-orange-400' : '')).join('')}
+          </div>
+        </div>`;
+    }
+
+    function verifyButtonHtml(ready) {
+      return `<button id="m-verify-btn" class="h-[34px] px-4 rounded-lg ${ready ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500'} text-[11px] font-bold transition-transform duration-100">Verify</button>`;
+    }
+    function verifySpinnerHtml() {
+      return `<div class="h-[34px] px-3 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center gap-1.5"><span class="w-3 h-3 rounded-full border-2 border-slate-300 border-t-slate-900 animate-spin"></span>Verifying</div>`;
+    }
+    function verifiedBadgeHtml() {
+      return `<div class="h-[34px] px-3 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i>Verified</div>`;
+    }
+
+    // o: { upiText, verifyHtml, verified, continueEnabled, dim, sheet }
+    function checkoutPage(o) {
+      o = o || {};
+      const isCollect = currentFlowType === 'collect';
+      const tile = a => `
+        <button${a.id ? ` id="${a.id}"` : ''} class="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-left text-[11px] font-semibold text-slate-800 transition-transform duration-100">
+          ${appLogo(a, 22)}<span class="truncate">${a.name}</span>
+        </button>`;
+      const appsTile = `
+        <button id="m-apps-upi" class="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-[11px] font-semibold text-slate-800 transition-transform duration-100">
+          <span class="grid grid-cols-2 gap-[2px] w-[22px]">
+            <i class="w-2.5 h-2.5 rounded-[2px] bg-slate-400"></i><i class="w-2.5 h-2.5 rounded-[2px] bg-slate-400"></i>
+            <i class="w-2.5 h-2.5 rounded-[2px] bg-slate-400"></i><i class="w-2.5 h-2.5 rounded-[2px] bg-slate-400"></i>
+          </span>
+          <span>Apps &amp; UPI</span>
+        </button>`;
+      const upiRow = isCollect ? `
+        <div class="px-3 pb-3 pt-3 border-t border-slate-100">
+          <div class="text-[11px] font-semibold text-slate-600 mb-1.5">Enter UPI ID</div>
+          <div class="flex gap-2 items-stretch">
+            <div id="m-upi-input" class="flex-1 min-w-0 min-h-[34px] rounded-lg border ${o.verified ? 'border-emerald-400' : 'border-slate-300'} bg-white px-3 flex items-center text-[11px] font-mono text-slate-900"><span id="m-upi-text">${o.upiText || ''}</span></div>
+            <div id="m-verify-wrap" class="shrink-0">${o.verifyHtml || verifyButtonHtml(false)}</div>
+          </div>
+          ${o.verified ? `
+            <div class="pop-in mt-2 flex items-center gap-2 p-2 rounded-lg bg-emerald-50 border border-emerald-200">
+              <span class="w-7 h-7 rounded-full bg-emerald-600 text-white text-[11px] font-black flex items-center justify-center">${COLLECT_PAYER.name.charAt(0)}</span>
+              <div>
+                <div class="text-[11px] font-bold text-slate-900">${COLLECT_PAYER.name}</div>
+                <div class="text-[10px] font-mono text-slate-500">${COLLECT_PAYER.vpa}</div>
+              </div>
+            </div>` : ''}
+        </div>` : '';
+      const dots = [UPI_APPS[1], UPI_APPS[2], UPI_APPS[3]].map(a => `<span class="w-2.5 h-2.5 rounded-full" style="background:${a.color}"></span>`).join('');
+      const accordion = (icon, label) => `
+        <div class="mx-3 mt-2 bg-white rounded-xl border border-slate-200 flex items-center gap-3 px-3 py-2.5">
+          <i data-lucide="${icon}" class="w-4 h-4 text-blue-600"></i>
+          <span class="flex-1 text-[12px] font-semibold text-slate-800">${label}</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+        </div>`;
+      const body = `
+        <div class="${o.dim ? 'opacity-40' : ''} transition-opacity">
+          <div class="px-4 pt-3 pb-2 text-[12px] text-slate-500">All Payment Options</div>
+          <div class="mx-3 bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div class="flex items-center gap-2 px-3 py-2.5">
+              <i data-lucide="send" class="w-4 h-4 text-blue-600"></i>
+              <span class="text-[12px] font-bold text-slate-900">UPI</span>
+              <span class="flex items-center gap-1 ml-1">${dots}</span>
+              <span class="flex-1"></span>
+              <i data-lucide="chevron-up" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <div class="grid grid-cols-2 gap-2 px-3 pb-3">${isCollect ? `${tile(UPI_APPS[1])}${tile(UPI_APPS[2])}${tile(UPI_APPS[3])}${appsTile}` : `${tile(UPI_APPS[0])}${tile(UPI_APPS[1])}${tile(UPI_APPS[2])}${tile(UPI_APPS[3])}`}</div>
+            ${upiRow}
+          </div>
+          ${[['credit-card', 'Cards'], ['landmark', 'Netbanking'], ['calendar-days', 'EMI'], ['wallet', 'Wallet'], ['clock', 'Pay Later']].map(([i, l]) => accordion(i, l)).join('')}
+          <div class="flex items-center justify-center gap-1.5 py-4 text-[10px] text-slate-500">Powered by <img src="${UPI_LOGO_SRC}" alt="UPI" class="h-3.5 w-auto" draggable="false"></div>
+        </div>`;
+      const bottom = `
+        <div class="border-t border-slate-200 px-4 py-2.5 flex items-center justify-between bg-white shrink-0">
+          <div>
+            <div class="text-sm font-black text-slate-900">₹${MERCH_ITEM.price}</div>
+            <div class="text-[10px] text-blue-600 font-semibold flex items-center gap-0.5">View Details <i data-lucide="chevron-up" class="w-3 h-3"></i></div>
+          </div>
+          <button id="m-continue-btn" ${o.continueEnabled ? '' : 'disabled'} class="px-7 py-2.5 rounded-lg text-sm font-bold text-white transition-transform duration-100 ${o.continueEnabled ? 'bg-slate-900' : 'bg-slate-300'}">Continue</button>
+        </div>`;
+      return `
+        <div class="h-full flex flex-col bg-slate-50 relative overflow-hidden screen-in">
+          <div class="px-3 py-3 flex items-center gap-2 bg-white shrink-0 border-b border-slate-100">
+            <i data-lucide="arrow-left" class="w-5 h-5 text-blue-600"></i>
+            <span class="flex-1 text-[15px] font-black text-blue-700">SwiftStore</span>
+            <span class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center"><i data-lucide="user" class="w-4 h-4"></i></span>
+          </div>
+          <div class="flex-1 min-h-0 overflow-y-auto">${body}</div>
+          ${bottom}
+          ${o.sheet || ''}
+        </div>`;
+    }
+
+    function renderMerchantScreenNow(state, frame) {
+      const container = document.getElementById('phone-display-container');
+      const isCollect = currentFlowType === 'collect';
+      const payLabel = isCollect ? 'Pay using UPI ID' : 'Pay via UPI App';
+      const amt = `₹${MERCH_ITEM.price}`;
+      let html = '';
+      let tapId = null, tapClasses = null, onTapped = null;   // the one tap this screen shows
+
+      switch (state) {
+        case 'm-home':
+          html = merchantShell(`
+            <div class="text-[11px] font-bold text-slate-500 mb-2">Featured</div>
+            ${merchantProductCard(false)}
+            <button id="m-add-btn" class="mt-4 w-full py-3 rounded-2xl border border-indigo-200 bg-indigo-50 text-indigo-700 font-bold text-sm transition-transform duration-100">Add to Cart</button>`);
+          tapId = 'm-add-btn'; tapClasses = ['bg-indigo-100'];
+          break;
+
+        case 'm-cart':
+          html = merchantShell(`
+            <div class="text-[11px] font-bold text-slate-500 mb-2">Your cart</div>
+            ${merchantProductCard(true)}`,
+            `<div class="px-4 pb-4">
+               <div class="p-3 rounded-2xl bg-indigo-600 text-white flex items-center justify-between">
+                 <span class="text-xs font-bold">1 item · ${amt}</span>
+                 <button id="m-cart-btn" class="text-xs font-black bg-white text-indigo-700 px-3 py-1.5 rounded-xl transition-transform duration-100">Checkout</button>
+               </div>
+             </div>`);
+          tapId = 'm-cart-btn'; tapClasses = ['bg-indigo-50'];
+          break;
+
+        case 'm-checkout':
+          html = checkoutPage({});
+          if (!isCollect) { tapId = 'm-app-demopay'; tapClasses = ['bg-orange-100']; }
+          break;
+
+        case 'm-app-picker':
+          html = checkoutPage({ dim: true, sheet: appPickerSheet() });
+          tapId = 'm-app-demopay'; tapClasses = ['bg-orange-100'];
+          break;
+
+        case 'm-handoff':
+          html = `
+            <div class="h-full flex flex-col items-center justify-center bg-white">
+              <div class="w-16 h-16 rounded-2xl border-2 border-orange-200 bg-orange-50 flex items-center justify-center mb-3">
+                <div class="w-4 h-4 rounded-full border-4 border-orange-500"></div>
+              </div>
+              <div class="text-sm font-black text-slate-900">DemoPay <span class="text-orange-500">+</span></div>
+              <img src="${UPI_LOGO_SRC}" alt="UPI" class="h-5 w-auto mt-3" draggable="false">
+            </div>`;
+          break;
+
+        case 'm-upi-entry':
+          html = checkoutPage({ upiText: '', verifyHtml: verifyButtonHtml(false) });
+          break;
+
+        case 'm-verifying':
+          html = checkoutPage({ upiText: COLLECT_PAYER.vpa, verifyHtml: verifyButtonHtml(true) });
+          tapId = 'm-verify-btn'; tapClasses = ['bg-slate-700'];
+          onTapped = () => { const w = document.getElementById('m-verify-wrap'); if (w) w.innerHTML = verifySpinnerHtml(); };
+          break;
+
+        case 'm-verified':
+        case 'm-raise':
+          html = checkoutPage({ upiText: COLLECT_PAYER.vpa, verifyHtml: verifiedBadgeHtml(), verified: true, continueEnabled: true });
+          if (state === 'm-raise') { tapId = 'm-continue-btn'; tapClasses = ['bg-slate-700']; }
+          break;
+
+        case 'm-collect-sent':
+        case 'collect-notif': {
+          const waiting = `
+            <div class="flex-1 flex flex-col items-center justify-center text-center">
+              <div class="w-14 h-14 rounded-full border-4 border-indigo-100 border-t-indigo-600 animate-spin mb-4"></div>
+              <div class="text-sm font-black text-slate-900">Collect request sent</div>
+              <p class="text-[11px] text-slate-500 mt-1 px-4">Waiting for ${COLLECT_PAYER.vpa} to approve ${amt} in their UPI app</p>
+            </div>`;
+          const banner = `
+            <div id="m-notif-banner" class="absolute top-2 inset-x-3 z-[70] bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-slate-200 cursor-pointer transition-transform duration-300 -translate-y-[150%]">
+              <div class="flex items-start gap-2.5">
+                <span class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">DP</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-center"><span class="text-[11px] font-black text-slate-900">DemoPay</span><span class="text-[9px] text-slate-400">now</span></div>
+                  <p class="text-[11px] text-slate-700 leading-snug">Merchant ABC has raised a collect request of <b>${amt}</b> on your UPI ID. Tap to pay.</p>
+                </div>
+              </div>
+            </div>`;
+          html = merchantShell(waiting, '', state === 'collect-notif' ? banner : '');
+          break;
+        }
+      }
+
+      const PAGE_GROUPS = [['m-checkout', 'm-upi-entry', 'm-verifying', 'm-verified', 'm-raise'], ['m-collect-sent', 'collect-notif']];
+      const samePage = PAGE_GROUPS.some(g => g.includes(state) && g.includes(window.__lastMerchantState));
+      window.__lastMerchantState = state;
+      container.innerHTML = html;
+      lucide.createIcons();
+      if (samePage && container.firstElementChild) container.firstElementChild.classList.remove('screen-in');
+
+      // Typing: the UPI ID is typed in on the entry screen (one action)
+      if (state === 'm-upi-entry') {
+        (async () => {
+          const txt = document.getElementById('m-upi-text');
+          for (let i = 1; i <= COLLECT_PAYER.vpa.length; i++) {
+            if (txt) txt.textContent = COLLECT_PAYER.vpa.slice(0, i);
+            await sleep(110 + Math.random() * 90); if (!frameLive(frame)) return;
+          }
+          const vb = document.getElementById('m-verify-btn');
+          if (vb) { vb.classList.replace('bg-slate-200', 'bg-slate-900'); vb.classList.replace('text-slate-500', 'text-white'); }
+        })();
+      }
+
+      // The notification slides in when it arrives; tapping it moves on to DemoPay
+      if (state === 'collect-notif') {
+        (async () => {
+          await sleep(60); if (!frameLive(frame)) return;
+          const b = document.getElementById('m-notif-banner');
+          if (b) {
+            b.classList.remove('-translate-y-[150%]');
+            setTimeout(() => { if (frameLive(frame)) pressButton(b, ['bg-slate-100']); }, 650);
+            b.onclick = () => { if (!isAutoSimulating) stepSimulation(1); };
+          }
+        })();
+      }
+
+      if (tapId) {
+        // 1) the tap target pulses, 2) the press is shown, 3) the screen follows
+        setTimeout(() => { if (frameLive(frame)) tapHint(tapId); }, 0);
+        setTimeout(() => {
+          if (!frameLive(frame)) return;
+          document.querySelectorAll('#phone-display-container .tap-hint').forEach(n => n.remove());
+          press(tapId, tapClasses);
+          if (onTapped) setTimeout(() => { if (frameLive(frame)) onTapped(); }, 200);
+        }, 300);
+      }
+    }
+
+    // App change: the leaving app slides away, then the arriving app takes over
+    function renderMerchantScreen(state, frame) {
+      const container = document.getElementById('phone-display-container');
+      const leaving = state === 'm-handoff' ? container.firstElementChild : null;
+      const mount = () => {
+        renderMerchantScreenNow(state, frame);
+        if (state === 'm-handoff' && container.firstElementChild) container.firstElementChild.classList.add('app-pop');
+      };
+      if (leaving) {
+        leaving.classList.add('screen-exit');
+        setTimeout(() => { if (frameLive(frame)) mount(); }, 300);
+      } else {
+        mount();
+      }
+    }
+
+    // Back to the merchant app: the DemoPay result slides away, the merchant app slides back in
+    function renderMerchantReturn(status, frame) {
+      const container = document.getElementById('phone-display-container');
+      container.querySelectorAll('#m-exit-arrow').forEach(n => n.remove());
+      const leaving = container.firstElementChild;
+      const mount = () => {
+        renderMerchantReturnNow(status);
+        if (container.firstElementChild) container.firstElementChild.classList.add('screen-enter-back');
+      };
+      if (leaving) {
+        leaving.classList.add('screen-exit');
+        setTimeout(() => { if (frameLive(frame)) mount(); }, 300);
+      } else {
+        mount();
+      }
+    }
+
+    // Which DemoPay result screen the scenario ends on: success | fail | deemed
+    function resultStateFor(sc) {
+      return sc.kind === 'deemed' ? 'deemed-txn' : sc.kind === 'fail' ? 'fail-txn' : 'success-txn';
+    }
+
+    // Result screen the payer lands on after pressing the back arrow in DemoPay
+    function renderMerchantReturnNow(status) {
+      const container = document.getElementById('phone-display-container');
+      const cfg = status === 'fail'
+        ? { icon: 'x', cls: 'bg-red-50 border-red-400 text-red-500', color: 'text-red-600', title: 'Payment Failed', sub: getFailInfo().reason, order: 'Not placed' }
+        : status === 'deemed'
+          ? { icon: 'clock', cls: 'bg-amber-50 border-amber-400 text-amber-600', color: 'text-amber-600', title: 'Payment Pending', sub: 'Debit done, credit not confirmed yet. The order will update shortly.', order: 'Pending' }
+          : { icon: 'check', cls: 'bg-emerald-50 border-emerald-400 text-emerald-600', color: 'text-emerald-600', title: 'Payment Successful', sub: 'Your order has been placed.', order: 'Confirmed' };
+
+      container.innerHTML = `
+        <div class="h-full flex flex-col bg-white relative overflow-hidden screen-in">
+          <div class="px-4 py-3 flex items-center justify-between border-b border-slate-100 shrink-0">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-indigo-600"></i>
+              <span class="text-sm font-black text-slate-900">SwiftStore</span>
+            </div>
+            <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-700"></i>
+          </div>
+          <div class="flex-1 flex flex-col items-center justify-center text-center px-6">
+            <div class="w-20 h-20 rounded-full border-4 ${cfg.cls} flex items-center justify-center mb-5"><i data-lucide="${cfg.icon}" class="w-9 h-9"></i></div>
+            <h3 class="text-lg font-black ${cfg.color}">${cfg.title}</h3>
+            <p class="text-xs text-slate-500 mt-1">${cfg.sub}</p>
+            <div class="w-full mt-6 bg-slate-50 border border-slate-200 rounded-2xl p-4 text-[11px] font-mono space-y-2 text-left">
+              <div class="flex justify-between text-slate-500"><span>Merchant:</span><span class="text-slate-900 font-bold">Merchant ABC</span></div>
+              <div class="flex justify-between text-slate-500"><span>Amount:</span><span class="text-slate-900 font-bold">₹${MERCH_ITEM.price}</span></div>
+              <div class="flex justify-between text-slate-500"><span>Order status:</span><span class="${cfg.color} font-bold">${cfg.order}</span></div>
+            </div>
+          </div>
+          <div class="px-4 pb-6">
+            <button onclick="renderPhoneScreen('m-home')" class="w-full py-3.5 rounded-2xl bg-indigo-600 text-white font-bold text-sm">Continue Shopping</button>
+          </div>
+        </div>`;
+      lucide.createIcons();
+    }
+
+    // Adds the top-left back arrow to the DemoPay result screen; pressing it (or Next) goes to the merchant app
+    function attachMerchantExit(frame) {
+      const container = document.getElementById('phone-display-container');
+      if (!container) return;
+      const st = window.currentPhoneState;
+      const status = st === 'fail-txn' ? 'fail' : st === 'deemed-txn' ? 'deemed' : 'success';
+      container.querySelectorAll('#m-exit-arrow').forEach(n => n.remove());
+
+      const goBack = () => renderPhoneScreen('merchant-return', { status, force: true });
+      const btn = document.createElement('button');
+      btn.id = 'm-exit-arrow';
+      btn.setAttribute('aria-label', 'Back to merchant app');
+      btn.className = 'absolute left-2 top-2 z-[60] w-8 h-8 rounded-full bg-white shadow-md border border-slate-200 flex items-center justify-center text-slate-700 transition-transform duration-100';
+      btn.innerHTML = '<i data-lucide="arrow-left" class="w-4 h-4"></i>';
+      btn.onclick = goBack;
+      container.appendChild(btn);
+      setTimeout(() => tapHint('m-exit-arrow'), 500);
+
+      const done = document.getElementById('sim-back-home');
+      if (done) done.onclick = goBack;
+      lucide.createIcons();
+    }
+
     function renderPhoneScreen(state, opts) {
       opts = opts || {};
       const container = document.getElementById('phone-display-container');
@@ -1668,6 +2242,28 @@
       const currentFrame = window.animFrameId;
 
       switch (state) {
+        case 'm-home':
+        case 'm-cart':
+        case 'm-checkout':
+        case 'm-app-picker':
+        case 'm-handoff':
+        case 'm-upi-entry':
+        case 'm-verifying':
+        case 'm-verified':
+        case 'm-raise':
+        case 'm-collect-sent':
+        case 'collect-notif':
+          renderMerchantScreen(state, currentFrame);
+          break;
+
+        case 'merchant-result-arrow':
+          renderPhoneScreen(resultStateFor(getScenario()), { force: true });
+          break;
+
+        case 'merchant-return':
+          renderMerchantReturn(opts.status || getScenario().kind, currentFrame);
+          break;
+
         case 'home-screen':
           container.innerHTML = `
             <div class="h-full flex flex-col justify-between bg-white relative">
@@ -2056,19 +2652,19 @@
     const WIRE_GEOM = {
       'wire-cl-req':           { d: 'M 89 282 L 89 141',   lx: 81,  ly: 214, a: 'end' },
       'wire-cl-resp':          { d: 'M 121 141 L 121 279', lx: 129, ly: 214, a: 'start' },
-      'wire-psp-req':          { d: 'M 178 306 L 300 306', lx: 239, ly: 311, a: 'middle' },
-      'wire-psp-resp':         { d: 'M 302 334 L 180 334', lx: 241, ly: 339, a: 'middle' },
-      'wire-switch-req':       { d: 'M 448 306 L 570 306', lx: 509, ly: 311, a: 'middle' },
-      'wire-switch-resp':      { d: 'M 572 334 L 450 334', lx: 511, ly: 339, a: 'middle' },
+      'wire-psp-req':          { d: 'M 178 306 L 295 306', lx: 237, ly: 311, a: 'middle' },
+      'wire-psp-resp':         { d: 'M 297 334 L 180 334', lx: 239, ly: 339, a: 'middle' },
+      'wire-switch-req':       { d: 'M 453 306 L 570 306', lx: 511, ly: 311, a: 'middle' },
+      'wire-switch-resp':      { d: 'M 572 334 L 455 334', lx: 513, ly: 339, a: 'middle' },
       'wire-bank-req':         { d: 'M 644 272 L 644 145', lx: 636, ly: 214, a: 'end' },
       'wire-bank-resp':        { d: 'M 676 145 L 676 270', lx: 684, ly: 214, a: 'start' },
       'wire-hsm-req':          { d: 'M 581 86 L 455 86',   lx: 518, ly: 91,  a: 'middle' },
       'wire-hsm-resp':         { d: 'M 455 114 L 580 114', lx: 518, ly: 119, a: 'middle' },
       'wire-cbs-req':          { d: 'M 739 86 L 855 86',   lx: 797, ly: 91,  a: 'middle' },
       'wire-cbs-resp':         { d: 'M 856 114 L 740 114', lx: 798, ly: 119, a: 'middle' },
-      'wire-payee-psp-req':    { d: 'M 748 298 L 860 298', lx: 804, ly: 303, a: 'middle' },
-      'wire-payee-psp-resp':   { d: 'M 862 320 L 750 320', lx: 806, ly: 325, a: 'middle' },
-      'wire-payee-psp-notify': { d: 'M 748 342 L 860 342', lx: 804, ly: 347, a: 'middle' },
+      'wire-payee-psp-req':    { d: 'M 748 298 L 855 298', lx: 801, ly: 303, a: 'middle' },
+      'wire-payee-psp-resp':   { d: 'M 857 320 L 750 320', lx: 803, ly: 325, a: 'middle' },
+      'wire-payee-psp-notify': { d: 'M 748 342 L 855 342', lx: 801, ly: 347, a: 'middle' },
       'wire-payee-bank-req':   { d: 'M 644 368 L 644 495', lx: 636, ly: 436, a: 'end' },
       'wire-payee-bank-resp':  { d: 'M 676 497 L 676 370', lx: 684, ly: 436, a: 'start' },
       'wire-payee-cbs-req':    { d: 'M 739 526 L 855 526', lx: 797, ly: 531, a: 'middle' },
@@ -2101,24 +2697,80 @@
     FLOW_ARROWS.mobile = FLOW_ARROWS.pay;
     FLOW_ARROWS.qr = FLOW_ARROWS.pay;
 
-    const FLOW_VIEWBOX = { pay: '0 30 1040 580', mobile: '0 30 1040 580', qr: '0 30 1040 580', pin: '0 30 790 370', balance: '0 30 1040 370' };
+    const FLOW_VIEWBOX = { pay: '0 30 1040 580', mobile: '0 30 1040 580', qr: '0 30 1040 580', intent: '0 30 1040 580', collect: '0 30 1040 580', pin: '0 30 790 370', balance: '0 30 1040 370' };
     const FLOW_HIDDEN_BLOCKS = {
       pay: [],
       mobile: [],
       qr: [],
+      intent: [],
+      collect: [],
       balance: ['block-payee-psp', 'block-payee-bank', 'block-payee-cbs'],
       pin: ['block-payee-psp', 'block-payee-bank', 'block-payee-cbs', 'block-payer-cbs']
     };
     const ALL_BLOCK_IDS = ['block-cl', 'block-payer-app', 'block-payer-psp', 'block-central-switch', 'block-payee-psp', 'block-payer-bank', 'block-payer-hsm', 'block-payer-cbs', 'block-payee-bank', 'block-payee-cbs'];
 
+    const BLOCK_COLORS = { app: '#ff9f1c', cl: '#3b6cff', ppsp: '#ff8a1f', sw: '#ff5a1f', pbank: '#3dff9a', hsm: '#2dd4bf', pcbs: '#22c55e', rpsp: '#22d3ee', rbank: '#c86bff', rcbs: '#e879f9' };
+    const WIRE_ENDS = {
+      'wire-cl-req': ['app', 'cl'], 'wire-cl-resp': ['cl', 'app'], 'wire-psp-req': ['app', 'ppsp'], 'wire-psp-resp': ['ppsp', 'app'],
+      'wire-switch-req': ['ppsp', 'sw'], 'wire-switch-resp': ['sw', 'ppsp'], 'wire-bank-req': ['sw', 'pbank'], 'wire-bank-resp': ['pbank', 'sw'],
+      'wire-hsm-req': ['pbank', 'hsm'], 'wire-hsm-resp': ['hsm', 'pbank'], 'wire-cbs-req': ['pbank', 'pcbs'], 'wire-cbs-resp': ['pcbs', 'pbank'],
+      'wire-payee-psp-req': ['sw', 'rpsp'], 'wire-payee-psp-resp': ['rpsp', 'sw'], 'wire-payee-psp-notify': ['sw', 'rpsp'],
+      'wire-payee-bank-req': ['sw', 'rbank'], 'wire-payee-bank-resp': ['rbank', 'sw'], 'wire-payee-cbs-req': ['rbank', 'rcbs'], 'wire-payee-cbs-resp': ['rcbs', 'rbank']
+    };
+    function addParticles(ids) {
+      const g = document.getElementById('svg-particles'); if (!g) return;
+      g.innerHTML = ids.map(id => WIRE_GEOM[id] ? [0, 1, 2].map(i =>
+        `<circle r="3.6" fill="#fff" class="[filter:drop-shadow(0_0_5px_#fb923c)]"><animateMotion path="${WIRE_GEOM[id].d}" dur="1.2s" begin="${i * 0.4}s" repeatCount="indefinite" /></circle>`).join('') : '').join('');
+      document.getElementById('flow-svg').classList.add('has-active');
+    }
+
+    function tweenViewBox(svg, target) {
+      const to = target.split(' ').map(Number);
+      const from = (svg.getAttribute('viewBox') || target).split(' ').map(Number);
+      cancelAnimationFrame(svg._vbRaf);
+      const t0 = performance.now(), dur = 500;
+      const ease = t => 1 - Math.pow(1 - t, 3);
+      const step = now => {
+        const k = ease(Math.min(1, (now - t0) / dur));
+        svg.setAttribute('viewBox', from.map((v, i) => (v + (to[i] - v) * k).toFixed(2)).join(' '));
+        if (k < 1) svg._vbRaf = requestAnimationFrame(step);
+      };
+      svg._vbRaf = requestAnimationFrame(step);
+    }
+    function syncFlowPills() {
+      const box = document.getElementById('flow-pills'), sel = document.getElementById('flow-select');
+      if (!box || !sel) return;
+      if (!box.dataset.built) {
+        box.innerHTML = '<span id="flow-pill-hl" class="absolute top-1 bottom-1 rounded-full bg-sky-400/20 ring-1 ring-sky-400/50 shadow-[0_0_14px_rgba(56,189,248,.35)] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"></span>' +
+          [...sel.options].map(o => `<button type="button" data-v="${o.value}" class="relative z-10 shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold normal-case tracking-normal text-slate-400 hover:text-sky-200 transition-colors duration-300">${o.textContent.replace(/ Flow$/, '')}</button>`).join('');
+        box.querySelectorAll('button').forEach(btn => btn.onclick = () => { sel.value = btn.dataset.v; setBackendTab(btn.dataset.v); });
+        box.dataset.built = '1';
+        new ResizeObserver(() => syncFlowPills()).observe(box);
+      }
+      const hl = document.getElementById('flow-pill-hl');
+      box.querySelectorAll('button').forEach(btn => {
+        const on = btn.dataset.v === sel.value;
+        btn.classList.toggle('text-sky-100', on); btn.classList.toggle('text-slate-400', !on);
+        if (on && hl) { hl.style.left = btn.offsetLeft + 'px'; hl.style.width = btn.offsetWidth + 'px'; btn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+      });
+    }
+    window.addEventListener('resize', () => syncFlowPills());
+    const BLOCK_DOM = { app: 'block-payer-app', cl: 'block-cl', ppsp: 'block-payer-psp', sw: 'block-central-switch', pbank: 'block-payer-bank', hsm: 'block-payer-hsm', pcbs: 'block-payer-cbs', rpsp: 'block-payee-psp', rbank: 'block-payee-bank', rcbs: 'block-payee-cbs' };
+
     function injectSvgWires(flowType) {
       const g = document.getElementById('svg-wires-group');
       if (!g) return;
       const arrows = FLOW_ARROWS[flowType] || FLOW_ARROWS.pay;
-      g.innerHTML = Object.entries(arrows).map(([id, nums]) => {
+      const defs = Object.keys(arrows).map(id => {
+        const [x1, y1, x2, y2] = WIRE_GEOM[id].d.match(/-?\d+/g).map(Number);
+        const [from, to] = WIRE_ENDS[id].map(b => BLOCK_COLORS[b]);
+        return `<linearGradient id="g-${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient>` +
+          `<marker id="m-${id}" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="${to}"/></marker>`;
+      }).join('');
+      g.innerHTML = `<defs>${defs}</defs>` + Object.entries(arrows).map(([id, nums]) => {
         const w = WIRE_GEOM[id];
         const label = nums.map((n, i) => (i ? '<tspan> · </tspan>' : '') + `<tspan data-n="${n}">#${n}</tspan>`).join('');
-        return `<path id="${id}" d="${w.d}" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow-neutral)" />` +
+        return `<path id="${id}" d="${w.d}" stroke="url(#g-${id})" stroke-width="2.5" stroke-linecap="round" fill="none" marker-end="url(#m-${id})" />` +
           `<text id="label-${id}" x="${w.lx}" y="${w.ly}" text-anchor="${w.a}" fill="#94a3b8" font-size="14" font-family="monospace" font-weight="bold" stroke="#0b101d" stroke-width="5" stroke-linejoin="round" paint-order="stroke">${label}</text>`;
       }).join('');
     }
@@ -2135,10 +2787,13 @@
     }
 
     function clearDiagramHighlights() {
+      const pg = document.getElementById('svg-particles'); if (pg) pg.innerHTML = '';
+      document.getElementById('flow-svg').classList.remove('has-active');
+      document.querySelectorAll('#flow-svg g.block-end').forEach(b => b.classList.remove('block-end'));
       document.querySelectorAll('#svg-wires-group path').forEach(wire => {
-        wire.setAttribute('stroke', '#475569');
-        wire.setAttribute('stroke-width', '3');
-        wire.setAttribute('marker-end', 'url(#arrow-neutral)');
+        wire.setAttribute('stroke', `url(#g-${wire.id})`);
+        wire.setAttribute('stroke-width', '2.5');
+        wire.setAttribute('marker-end', `url(#m-${wire.id})`);
         wire.classList.remove('wire-active');
       });
       document.querySelectorAll('#svg-wires-group text').forEach(lbl => {
@@ -2161,11 +2816,31 @@
     // =========================================================================
     // ---- Activity Center: major steps, per flow ------------------------------------
     // Sub-steps match either backend arrows (a: [from, to]) or phone screens (states: [...]).
+    function merchantEntrySubs(flow, P) {
+      const pre = [
+        { tag: 'App', states: ['m-home'], title: 'Payer adds item to cart', text: 'The payer opens the SwiftStore merchant app and adds the item to the cart.' },
+        { tag: 'App', states: ['m-cart'], title: 'Payer checks out', text: `The cart shows the total of ₹${MERCH_ITEM.price} and the payer taps Checkout.` },
+        { tag: 'App', states: ['m-checkout'], title: flow === 'collect' ? 'Payer reaches checkout' : 'Payer taps DemoPay', text: 'The checkout shows the UPI payment options and the amount to pay.' }
+      ];
+      const mid = flow === 'intent' ? [
+        { tag: 'App', states: ['m-handoff'], title: 'Intent hand-off to DemoPay', text: 'The merchant app passes the payment request to DemoPay through a UPI intent, and DemoPay opens.' }
+      ] : [
+        { tag: 'App', states: ['m-upi-entry'], title: 'Payer enters payer UPI ID', text: `The payer types the UPI ID (${COLLECT_PAYER.vpa}).` },
+        { tag: 'App', states: ['m-verifying'], title: 'Payer taps Verify', text: 'The UPI ID is validated while the app shows a processing step.' },
+        { tag: 'App', states: ['m-verified'], title: 'Payer name returned', text: `The payer name (${COLLECT_PAYER.name}) is returned and shown as a verified payer.` },
+        { tag: 'App', states: ['m-raise'], title: 'Payer taps Continue', text: 'The payer taps Continue to send the collect request.' },
+        { tag: 'App', states: ['m-collect-sent'], title: 'Collect request sent', text: `The merchant app sends a collect request of ₹${MERCH_ITEM.price} to the payer's UPI ID.` },
+        { tag: 'App', states: ['collect-notif'], title: 'Collect notification on DemoPay', text: 'DemoPay receives the collect request and shows a notification. Tapping it opens the request.' }
+      ];
+      const qr = { tag: 'App', states: ['qr-details'], title: 'Merchant name and amount returned', text: `The payment request is decoded: merchant name ${P.name} is returned with the amount ₹${P.amount}.00 pre-filled.` };
+      return pre.concat(mid, [qr]);
+    }
+
     function learnGroupsSuccess(flow) {
       const P = PAYEE[flow] || PAYEE.pay;
       const isQr = flow === 'qr';
       const isMobile = flow === 'mobile';
-      const entrySubs = isQr ? [
+      const entrySubs = MERCHANT_FLOWS.includes(flow) ? merchantEntrySubs(flow, P) : isQr ? [
         { tag: 'App', states: ['qr-scan'], title: 'Payer scans the merchant QR', text: 'The camera opens and scans the merchant\'s QR code, which carries the merchant\'s payment address and the amount.' },
         { tag: 'App', states: ['qr-details'], title: 'Merchant name and amount returned', text: `The QR is decoded: merchant name ${P.name} is returned with the amount ₹${P.amount}.00 pre-filled.` }
       ] : [
@@ -2306,10 +2981,10 @@
       'Payer scans the merchant QR':       ['qrPayload', 'merchantVpa', 'mcc', 'qrType'],
       'Merchant name and amount returned': ['merchantName', 'merchantVpa', 'amount', 'respCode']
     };
-    function apiAttrsHtml(list) {
-      return `<div class="mt-2 pt-2 border-t border-orange-200">
+    function apiAttrsHtml(list, fresh) {
+      return `<div class="mt-2 pt-2 border-t border-orange-200/70">
         <div class="text-[9px] font-bold uppercase tracking-wider text-orange-600 mb-1.5">Key API message attributes</div>
-        <div class="flex flex-wrap gap-1">${list.map(a => `<span class="api-attr-chip">${a}</span>`).join('')}</div>
+        <div class="flex flex-wrap gap-1">${list.map((a, i) => `<span class="api-attr-chip${fresh ? ' fresh' : ''}" style="--i:${i}">${a}</span>`).join('')}</div>
       </div>`;
     }
 
@@ -2336,33 +3011,33 @@
 
       const header = (g, gi, active) => {
         const done = doneCut !== -1 && gi < doneCut;
-        const cls = active ? 'bg-orange-500 text-white' : done ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500';
+        const cls = active ? 'bg-gradient-to-br from-orange-500 to-amber-400 text-white shadow-[0_0_0_4px_rgba(249,115,22,.16)]' : done ? 'bg-emerald-500 text-white shadow-[0_0_0_3px_rgba(16,185,129,.14)]' : 'bg-slate-100 text-slate-400 ring-1 ring-slate-200';
         return `<div class="flex items-center gap-3 px-3 py-2.5">
               <span class="w-7 h-7 rounded-full text-[13px] font-bold flex items-center justify-center shrink-0 ${cls}">${done ? CHECK_SVG : gi + 1}</span>
-              <div class="min-w-0"><div class="text-[15px] font-bold ${active ? 'text-gray-900' : 'text-gray-600'}">${g.title}</div></div>
+              <div class="min-w-0"><div class="text-[15px] font-semibold tracking-tight ${active ? 'text-slate-900' : 'text-slate-500'}">${g.title}</div></div>
             </div>`;
       };
 
       const items = groups.map((g, gi) => {
         if (!(showActive && gi === cg)) {
           // collapsed tile: spare height is shared out so the column stays evenly filled
-          return `<li class="learn-tile rounded-xl border bg-white border-gray-200 flex-1 flex items-center ${showActive ? 'learn-blur' : ''}">${header(g, gi, false)}</li>`;
+          return `<li class="learn-tile step-tile ${gi <= doneCut ? 'step-up-done' : ''} ${gi < doneCut ? 'step-down-done' : ''} rounded-2xl border bg-white/90 border-slate-200 shadow-sm flex-1 flex items-center ${showActive ? 'learn-blur' + (opts.animate ? ' learn-blur-in' : '') : ''}" data-i="${gi}">${header(g, gi, false)}</li>`;
         }
         // expanded tile: height follows its content, so short steps are never empty
         const subs = g.subs.map((sb, si) => {
           const subActive = si === cs;
           const subDone = si < cs;
-          const cls = subActive ? 'border-orange-500 bg-white shadow-sm' : subDone ? 'border-emerald-400 bg-white/70' : 'border-gray-200 bg-white/40';
+          const cls = subActive ? 'border-orange-500 bg-white shadow-[0_6px_16px_-8px_rgba(249,115,22,.45)]' : subDone ? 'border-emerald-400 bg-white/70' : 'border-slate-200 bg-white/40';
           const tcls = subActive ? 'text-gray-900' : subDone ? 'text-gray-600' : 'text-gray-400';
-          return `<li class="rounded-lg border-l-4 px-3 py-2 transition-all ${cls}">
+          return `<li data-a="${sb.a ? sb.a[0] + ',' + sb.a[sb.a.length - 1] : ''}" class="rounded-xl border-l-4 px-3 py-2 transition-all duration-300 ${cls}">
               <div class="flex items-center justify-between gap-2">
                 <span class="text-sm font-bold ${tcls}">${sb.title}</span>
                 <span class="text-[11px] font-mono shrink-0 ${subActive ? 'text-orange-600' : 'text-gray-400'}">${subTag(sb)}</span>
               </div>
-              ${subActive ? `<p class="learn-fade text-[13px] text-gray-600 mt-1 leading-snug">${sb.text}</p>${API_ATTRS[sb.title] ? apiAttrsHtml(API_ATTRS[sb.title]) : ''}` : ''}
+              ${subActive ? `<p class="${opts.fresh ? 'learn-fade' : ''} text-[13px] text-slate-600 mt-1 leading-snug">${sb.text}</p>${API_ATTRS[sb.title] ? apiAttrsHtml(API_ATTRS[sb.title], opts.fresh) : ''}` : ''}
             </li>`;
         }).join('');
-        return `<li class="learn-tile learn-active ${opts.animate ? 'learn-rise' : ''} rounded-xl border border-orange-400 bg-orange-50 flex-none" data-active="1">
+        return `<li class="learn-tile step-tile step-active step-up-done learn-active ${opts.animate ? 'learn-rise' : ''} rounded-2xl border border-orange-300/80 bg-gradient-to-br from-orange-50 via-white to-amber-50 ring-1 ring-orange-200/70 flex-none" data-active="1" data-i="${gi}">
             ${header(g, gi, true)}
             <div class="learn-expand ${opts.animate ? 'is-opening' : ''}"><div class="learn-expand-inner">
               <ul class="px-3 pb-3 space-y-1.5">${subs}</ul>
@@ -2378,7 +3053,14 @@
     let learnPausing = false;        // collapsed "beat" between two steps is on screen
     let learnCtx = { a: null, state: null };   // latest arrow / phone screen, read when the beat ends
 
+    let learnLastKey = null;
     function renderLearn(list, a, state, allDone, opts) {
+      // animations only when the open sub-step changed; a redraw of the same sub-step stays still
+      const loc = allDone ? { cg: -1, cs: -1 } : locateGroup(a, state, currentFlowType);
+      const key = allDone ? 'done' : loc.cg + ':' + loc.cs;
+      opts = Object.assign({}, opts, { fresh: key !== learnLastKey });
+      learnLastKey = key;
+      clearLinkHover();
       list.innerHTML = learnListHtml(a, state, currentFlowType, allDone, opts);
       // keep the open tile in view when the list is taller than the panel
       const body = document.getElementById('learn-body');
@@ -2390,11 +3072,34 @@
       } else if (body && !act) { body.scrollTop = 0; }
     }
 
+    function clearLinkHover() {
+      document.querySelectorAll('#flow-svg .wire-hover, #flow-svg .label-hover, #flow-svg .block-hover').forEach(el => el.classList.remove('wire-hover', 'label-hover', 'block-hover'));
+    }
+    (function () {
+      const list = document.getElementById('learn-list');
+      if (!list) return;
+      list.addEventListener('mouseover', e => {
+        const li = e.target.closest('li[data-a]');
+        if (!li || !li.dataset.a) { clearLinkHover(); return; }
+        const [a0, a1] = li.dataset.a.split(',').map(Number);
+        clearLinkHover();
+        Object.entries(FLOW_ARROWS[currentFlowType] || {}).forEach(([id, nums]) => {
+          if (!nums.some(n => n >= a0 && n <= a1)) return;
+          const w = document.getElementById(id), l = document.getElementById('label-' + id);
+          if (w) w.classList.add('wire-hover'); if (l) l.classList.add('label-hover');
+          (WIRE_ENDS[id] || []).forEach(k => { const b = document.getElementById(BLOCK_DOM[k]); if (b) b.classList.add('block-hover'); });
+        });
+      });
+      list.addEventListener('mouseleave', clearLinkHover);
+    })();
+
     function updateLearnPanel(arrow, state, allDone) {
       const list = document.getElementById('learn-list');
       const wip = document.getElementById('learn-wip');
       if (!list || !wip) return;
-      const supported = ['pay', 'mobile', 'qr'].includes(currentFlowType);
+      const supported = ['pay', 'mobile', 'qr', 'intent'].includes(currentFlowType);
+      const wipText = document.getElementById('learn-wip-text');
+      if (wipText) wipText.textContent = currentFlowType === 'collect' ? 'Coming soon' : 'Work in Progress';
       wip.classList.toggle('hidden', supported);
       list.classList.toggle('hidden', !supported);
       if (!supported) { clearTimeout(learnTimer); learnPausing = false; return; }
@@ -2454,8 +3159,14 @@
       });
 
       const svg = document.getElementById('flow-svg');
-      if (svg) svg.setAttribute('viewBox', FLOW_VIEWBOX[tab] || FLOW_VIEWBOX.pay);
+      if (svg) tweenViewBox(svg, FLOW_VIEWBOX[tab] || FLOW_VIEWBOX.pay);
+      { const vbw = +(FLOW_VIEWBOX[tab] || FLOW_VIEWBOX.pay).split(' ')[2]; document.querySelectorAll('#flow-zones rect').forEach(r => r.setAttribute('width', Math.min(1010, vbw - 30))); }
       injectSvgWires(tab);
+      if (svg) {
+        ALL_BLOCK_IDS.forEach((id, i) => { const b = document.getElementById(id); if (b) b.style.setProperty('--i', i); });
+        svg.classList.remove('flow-enter'); void svg.getBoundingClientRect(); svg.classList.add('flow-enter');
+      }
+      syncFlowPills();
 
       const isPay = PAY_FLOWS.includes(tab);
       const scCtl = document.getElementById('scenario-controls');
@@ -2468,13 +3179,13 @@
       if (ftWrap) ftWrap.style.display = (isPay && currentScenario === 'fail') ? 'flex' : 'none';
 
       const total = getActiveSteps().length;
-      const names = { pay: 'Pay to VPA Flow', mobile: 'Pay to Mobile Number Flow', qr: 'QR Payment Flow', pin: 'Pin Set Flow', balance: 'Balance Enquiry' };
+      const names = { pay: 'Pay to VPA Flow', mobile: 'Pay to Mobile Number Flow', qr: 'QR Payment Flow', intent: 'UPI Intent Flow', collect: 'Collect Request Flow', pin: 'Pin Set Flow', balance: 'Balance Enquiry' };
       const titleEl = document.getElementById('fs-step-title');
       const badgeEl = document.getElementById('fs-step-badge');
       const scLabel = !isPay || currentScenario === 'success' ? '' : currentScenario === 'deemed' ? ' (Deemed)' : ` (Fail: ${getFailInfo().label})`;
       if (titleEl) titleEl.innerText = `${total}-Step ${names[tab]}${scLabel} Ready`;
       if (badgeEl) badgeEl.innerText = `STEP: 0 / ${total}`;
-      renderPhoneScreen('home-screen');
+      renderPhoneScreen(MERCHANT_FLOWS.includes(tab) ? 'm-home' : 'home-screen');
     }
 
     function resetSimulation() {
@@ -2588,6 +3299,8 @@
           });
         }
       });
+      addParticles(step.activeWires);
+      step.activeWires.forEach(wId => (WIRE_ENDS[wId] || []).forEach(k => { const b = document.getElementById(BLOCK_DOM[k]); if (b) b.classList.add('block-end'); }));
 
       step.activeBlocks.forEach(bId => {
         const el = document.getElementById(bId);
@@ -2600,6 +3313,12 @@
           el.classList.add('block-active');
         }
       });
+    }
+
+    function cycleSpeed() {
+      const speeds = [0.5, 1, 1.5, 2];
+      window.simSpeed = speeds[(speeds.indexOf(window.simSpeed) + 1) % speeds.length];
+      const b = document.getElementById('btn-speed'); if (b) b.textContent = window.simSpeed + '×';
     }
 
     function toggleAutoSimulation() {
@@ -2659,6 +3378,9 @@
           delay = 1500; // Proceed to Pay tap
         } else if (state === 'home-screen' || state.includes('select-acct')) {
           delay = 1000; // Give enough time for the initial UI button press animation
+        } else if (state.startsWith('m-') || state === 'collect-notif' || state === 'merchant-result-arrow') {
+          delay = ({ 'm-upi-entry': 2100, 'm-verifying': 1100, 'm-verified': 600, 'm-raise': 1000, 'm-checkout': state === 'm-checkout' && currentFlowType === 'collect' ? 700 : 1000,
+                     'm-collect-sent': 700, 'collect-notif': 1300, 'm-handoff': 1100 })[state] || 1100;   // merchant app: act, then move on
         } else if (state === 'pending-clearing' || isFinalState(state)) {
           delay = (currentStepIndex < activeSteps.length - 1) ? backendDwell() : 2500;   // backend hop: time to read the Activity Center
         }
@@ -2667,7 +3389,7 @@
       currentStepIndex++;
 
       if (currentStepIndex < activeSteps.length) {
-        autoSimTimer = setTimeout(runAutoLoop, delay);
+        autoSimTimer = setTimeout(runAutoLoop, delay / window.simSpeed);
       } else {
         isAutoSimulating = false;
         const autoText = document.getElementById('btn-auto-text');
@@ -3613,6 +4335,7 @@
       e.stopPropagation();
     }
   }, true);
-</script>
+
+  </script>
 </body>
 </html>
